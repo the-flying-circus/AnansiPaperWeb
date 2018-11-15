@@ -36,11 +36,17 @@ class Command(BaseCommand):
             else:
                 abstract = None
             url = result.get('presentationUrl')
+            year = result['year']['text']
+            if year:
+                year = int(year)
+            else:
+                year = None
 
-            obj, _ = Article.objects.get_or_create(title__iexact=title, defaults={
+            obj, _ = Article.objects.get_or_create(title__iexact=title, year__in=[year, None], defaults={
                 'title': title,
                 'abstract': abstract,
-                'url': url
+                'url': url,
+                'year': year
             })
 
             if not obj.url:

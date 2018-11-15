@@ -1,5 +1,4 @@
 from django.core.management.base import BaseCommand, CommandError
-from django.models import Q
 
 from .scholar import SearchScholarQuery, ScholarQuerier
 from web.models import Article
@@ -19,7 +18,7 @@ class Command(BaseCommand):
 
         for article in querier.articles:
             year = int(article['year'])
-            art, _ = Article.objects.get_or_create(title__iexact=article['title'].strip(), Q(year=year) | Q(year__isnull=True), defaults={
+            art, _ = Article.objects.get_or_create(title__iexact=article['title'].strip(), year__in=[year, None], defaults={
                 "url": article['url_pdf'],
                 "title": article['title'].strip(),
                 "year": year

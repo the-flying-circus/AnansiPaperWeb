@@ -3,6 +3,7 @@ from django.db import models
 
 class Author(models.Model):
     name = models.TextField()
+    email = models.EmailField()
 
 
 class Article(models.Model):

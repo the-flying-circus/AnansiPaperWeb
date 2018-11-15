@@ -13,6 +13,7 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         query = SearchScholarQuery()
         query.set_words_some(kwargs["query"])
+        query.set_num_page_results(20)
         querier = ScholarQuerier()
         querier.send_query(query)
 

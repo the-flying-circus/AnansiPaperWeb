@@ -8,11 +8,11 @@ class Command(BaseCommand):
     help = 'Import data from Google scholar'
 
     def add_arguments(self, parser):
-        pass
+        parser.add_argument("query", type=str)
 
     def handle(self, *args, **kwargs):
         query = SearchScholarQuery()
-        query.set_words_some("biology")
+        query.set_words_some(kwargs["query"])
         querier = ScholarQuerier()
         querier.send_query(query)
 

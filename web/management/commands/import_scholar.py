@@ -18,7 +18,7 @@ class Command(BaseCommand):
 
         for article in querier.articles:
             Article.objects.get_or_create(title__iexact=article['title'].strip(), year=int(article['year']), defaults={
-                "url": article['url_pdf'] or '',
+                "url": article['url_pdf'],
                 "title": article['title'].strip()
             })
             self.stdout.write("Imported '{}'".format(article['title']))

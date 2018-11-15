@@ -43,6 +43,14 @@ class Command(BaseCommand):
                 'url': url
             })
 
+            if not obj.url:
+                obj.url = url
+                obj.save()
+
+            if not obj.abstract:
+                obj.abstract = abstract
+                obj.save()
+
             # add authors
             authors = [x[0]['name'].strip() for x in result['authors']]
             for author in authors:

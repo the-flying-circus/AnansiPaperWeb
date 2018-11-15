@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block js %}
+    {{ block.super }}
+    <script type="text/javascript" src="{% static "js/particles.min.js" %}" />
+{% endblock %}

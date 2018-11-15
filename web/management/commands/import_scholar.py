@@ -12,12 +12,15 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         query = SearchScholarQuery()
-        query.set_words_some("car security")
+        query.set_words_some("biology")
         querier = ScholarQuerier()
         querier.send_query(query)
 
         for article in querier.articles:
-            Article.objects.get_or_create(title=article['title'], year=int(article['year']))
+            Article.objects.get_or_create(title__iexact=article['title'].strip(), year=int(article['year']), defaults={
+                "url": article['url_pdf'] or '',
+                "title": article['title'].strip()
+            })
             self.stdout.write("Imported '{}'".format(article['title']))
 
         self.stdout.write(self.style.SUCCESS('Import completed!'))

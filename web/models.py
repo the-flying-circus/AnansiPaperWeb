@@ -8,5 +8,6 @@ class Author(models.Model):
 
 class Article(models.Model):
     title = models.TextField()
+    year = models.PositiveSmallIntegerField()
     abstract = models.TextField()
     authors = models.ManyToManyField(Author)

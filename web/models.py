@@ -16,6 +16,8 @@ class Article(models.Model):
     year = models.PositiveSmallIntegerField(null=True)
     abstract = models.TextField(null=True)
     authors = models.ManyToManyField(Author)
+    # cites is the papers that this paper cites
+    # cited is all the other papers that cite this paper
     cites = models.ManyToManyField("Article", related_name="cited")
 
     def __str__(self):

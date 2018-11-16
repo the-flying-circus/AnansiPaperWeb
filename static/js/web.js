@@ -22,15 +22,17 @@ $(document).ready(function() {
     function zoomed() {
         g.attr("transform", d3.event.transform);
     }
+    const zoom = d3.zoom();
 
     const $container = $("#web-container");
-    const width = $container.width();
-    const height = $container.height();
+    var width = $container.width();
+    var height = $container.height();
+    var selectedNode;
 
     const svg = d3.select("#web-container")
         .attr("width", width)
         .attr("height", height)
-        .call(d3.zoom().scaleExtent([1, 10]).on("zoom", zoomed));
+        .call(zoom.scaleExtent([1, 10]).on("zoom", zoomed));
 
     const g = svg.append("g");
 
@@ -87,11 +89,21 @@ $(document).ready(function() {
         }, [node.id]);
     }
 
-    function selectNode(selectedNode) {
+    function transitionFocus() {
+        return d3.zoomIdentity
+            .translate(width / 2, height / 2)
+            .scale(2)
+            .translate(-selectedNode.x, -selectedNode.y);
+    }
+
+    function selectNode(node) {
+        selectedNode = node;
         const neighbors = getNeighbors(selectedNode);
         nodeElements.attr("fill", node => getNodeColor(node, neighbors));
         textElements.attr("fill", node => getTextColor(node, neighbors));
         linkElements.attr("stroke", link => getLinkColor(selectedNode, link));
+
+        g.transition().duration(500).call(zoom.transform, transitionFocus);
     }
 
     simulation.nodes(nodes).on("tick", () => {
@@ -116,8 +128,8 @@ $(document).ready(function() {
     selectNode(nodes[0]);
     nodeElements.on("click", selectNode);
     $(window).resize(function() {
-        const width = $container.width();
-        const height = $container.height();
+        width = $container.width();
+        height = $container.height();
         svg.attr("width", width).attr("height", height);
         //simulation.force("center", d3.forceCenter(width / 2, height / 2));
     });

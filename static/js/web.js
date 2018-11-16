@@ -101,7 +101,7 @@ function main() {
     }
 
     function getLinkColor(node, link) {
-        return isNeighborLink(node, link) ? "white" : "#ccc";
+        return isNeighborLink(node, link) ? "#bbb" : "#888";
     }
 
     function getNeighbors(node) {

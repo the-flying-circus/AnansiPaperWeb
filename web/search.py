@@ -121,7 +121,10 @@ def traverse(centralNodes, keywords):
         foundNodes.add(thisMax)
 
         # if it's too far away to continue
-        if nodes[thisMax][1] >= NODE_KILL_DEPTH_THRESH:
+        try:
+            if nodes[thisMax][1] >= NODE_KILL_DEPTH_THRESH:
+                continue
+        except KeyError:
             continue
 
         maxObj = Article.objects.filter(id=thisMax).first()

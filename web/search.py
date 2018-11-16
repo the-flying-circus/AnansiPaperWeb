@@ -21,7 +21,7 @@ def findCentral(titles, authors, keywords):
     """
 
     # first, all titles are automatically centrals
-    centrals = []
+    centrals = Article.objects.none()
     if titles:
         centrals = Article.objects.filter(id__in=titles)
         # print('found matching articles: ')

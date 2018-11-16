@@ -56,6 +56,14 @@
             $("#selected-keywords").append($("<span class='keyword' />").text(id).attr("data-id", id));
         }
 
+        function showSidebar() {
+            $("#search-container").css("width", "50%");
+            setTimeout(function() {
+                $("#search-container").css("float", "left");
+                $("#list-container").fadeIn();
+            }, 760);
+        }
+
         $(document).ready(function() {
             $("#search").selectize({
                 valueField: 'id',
@@ -63,7 +71,12 @@
                 searchField: ['title', 'authors', 'doi'],
                 maxItems: 1,
                 preload: true,
-                create: false,
+                create: function(input) {
+                    addKeyword(input);
+                    showSidebar();
+                    this.blur();
+                    return null;
+                },
                 render: {
                     option: function(item, escape) {
                         if (item.type == "article") {
@@ -94,11 +107,7 @@
                     else {
                         addAuthor(article.id, article.title);
                     }
-                    $("#search-container").css("width", "50%");
-                    setTimeout(function() {
-                        $("#search-container").css("float", "left");
-                        $("#list-container").fadeIn();
-                    }, 760);
+                    showSidebar();
                 }
                 $("#search")[0].selectize.clear();
             });
@@ -181,7 +190,7 @@
         background-color: transparent;
         border: 1px solid white;
     }
-    .selectize-dropdown .article, .selectize-dropdown .author {
+    .selectize-dropdown .article, .selectize-dropdown .author, .selectize-dropdown .create {
         padding: 5px;
     }
     .authors {

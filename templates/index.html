@@ -107,7 +107,9 @@
             });
             $("#selected-papers, #selected-authors").on("click", ".article, .author", function(e) {
                 e.preventDefault();
-                $(this).remove();
+                $(this).slideUp("fast", function() {
+                    $(this).remove();
+                });
             });
         });
     </script>

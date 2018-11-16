@@ -10,6 +10,7 @@ dj-database-url = "*"
 "requests" = "*"
 django-extensions = "*"
 rake-nltk = "*"
+"psycopg2" = "*"
 
 [dev-packages]
 

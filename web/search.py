@@ -29,7 +29,7 @@ def findCentral(titles, authors, keywords):
 
     if authors:
         # if there's only authors
-        authorPapers = Article.objects.filter(id__in=authors)
+        authorPapers = Article.objects.filter(authors__id__in=authors)
         # print('found author papers: ')
         # print(authorPapers)
         if not titles and not keywords:

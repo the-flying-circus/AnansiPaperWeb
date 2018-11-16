@@ -156,6 +156,7 @@ class Command(BaseCommand):
         self.stdout.write(self.style.SUCCESS('Import completed!'))
         self.stdout.write("{} imported, {} missing link, {} missing abstract.".format(self.total, self.missing_link, self.missing_abstract))
 
+        call_command("analyze_keywords")
         call_command("remove_duplicates")
 
         cache.clear()

@@ -7,8 +7,8 @@ CENTRAL_AUTHOR_TO_TITLE_THRESH = 0.3
 CENTRAL_AUTHOR_TO_KEYWORD_THRESH = 0.3
 CENTRAL_KEYWORD_ONLY_THRESH = 0.8
 
-NODE_KILL_SCORE_THRESH = 0.3
-NODE_KILL_DEPTH_THRESH = 5
+NODE_KILL_SCORE_THRESH = 0.5
+NODE_KILL_DEPTH_THRESH = 3
 
 
 def findCentral(titles, authors, keywords):
@@ -121,7 +121,11 @@ def traverse(centralNodes, keywords):
         foundNodes.add(thisMax)
 
         # if it's too far away to continue
-        if nodes[thisMax][1] >= NODE_KILL_DEPTH_THRESH:
+        try:
+            if nodes[thisMax][1] >= NODE_KILL_DEPTH_THRESH:
+                continue
+        except KeyError:
+            # if even the biggest one is so small that it is killed
             continue
 
         maxObj = Article.objects.filter(id=thisMax).first()

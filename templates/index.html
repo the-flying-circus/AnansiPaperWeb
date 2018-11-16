@@ -20,6 +20,11 @@
             searchField: 'title',
             maxItems: 1,
             create: false,
+            render: {
+                option: function(item, escape) {
+                    return '<div class="article"><span class="title">' + escape(item.title) + '</span></div>';
+                }
+            },
             load: function(query, callback) {
                 if (!query.length) return callback();
                 $.ajax({
@@ -45,6 +50,12 @@
     {{ block.super }}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/css/selectize.min.css" integrity="sha256-EhmqrzYSImS7269rfDxk4H+AHDyu/KwV1d8FDgIXScI=" crossorigin="anonymous" />
     <link rel="stylesheet" href="{% static "css/index.css"%}" />
+
+    <style>
+    .article {
+        padding: 5px;
+    }
+    </style>
 {% endblock %}
 
 {% block content %}

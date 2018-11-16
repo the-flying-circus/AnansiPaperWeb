@@ -1,4 +1,5 @@
 var nodes;
+var idToNode = {};
 var links;
 
 $(document).ready(function() {
@@ -8,6 +9,9 @@ $(document).ready(function() {
 
     $.get("/web/graph?nodes=" + encodeURIComponent($("#id_nodes").val()), function(data) {
         nodes = data.nodes;
+        for (var i = 0; i < nodes.length; i++) {
+            idToNode[nodes[i].id] = nodes[i];
+        }
         links = data.edges;
         $("#loading-wrapper").remove();
         main();
@@ -52,9 +56,9 @@ function main() {
 
     const g = svg.append("g");
 
-    const selectionMarker = g.append("circle")
-        .attr('r', 4)
-        .attr('fill', 'red');
+    // const selectionMarker = g.append("circle")
+    //     .attr('r', 4)
+    //     .attr('fill', 'red');
 
     const simulation = d3.forceSimulation()
         .force("charge", d3.forceManyBody().strength(-100))
@@ -132,7 +136,7 @@ function main() {
         textElements.attr("fill", node => getTextColor(node, neighbors));
         linkElements.attr("stroke", link => getLinkColor(selectedNode, link));
         svg.transition().duration(500).call(zoom.transform, transitionFocus);
-        selectionMarker.attr("cx", node.x).attr("cy", node.y);
+        // selectionMarker.attr("cx", node.x).attr("cy", node.y);
 
         $.get("/web/node?id=" + selectedNode.id, function(data) {
             $sidedrawerTitle.text(data.title);
@@ -147,16 +151,28 @@ function main() {
             $sidedrawerAbstract.text(data.abstract);
             $sidedrawerInCitations.empty();
             for (var i = 0; i < data.inward.length; i++) {
+                if (idToNode[data.inward[i].id] === undefined)
+                    continue;
                 const $citation = $(document.createElement("li"));
                 $citation.addClass("list-group-item");
                 $citation.text(data.inward[i].title);
+                $citation.attr("data-id", data.inward[i].id);
+                $citation.click(function() {
+                    selectNode(idToNode[$(this).attr("data-id")]);
+                })
                 $sidedrawerInCitations.append($citation);
             }
             $sidedrawerOutCitations.empty();
             for (var i = 0; i < data.outward.length; i++) {
+                if (idToNode[data.outward[i].id] === undefined)
+                    continue;
                 const $citation = $(document.createElement("li"));
                 $citation.addClass("list-group-item");
                 $citation.text(data.outward[i].title);
+                $citation.attr("data-id", data.outward[i].id);
+                $citation.click(function() {
+                    selectNode(idToNode[$(this).attr("data-id")]);
+                })
                 $sidedrawerOutCitations.append($citation);
             }
         });

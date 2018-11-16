@@ -71,6 +71,7 @@ a {
 
 .navdrawer .list-group-item {
     border-color: #444;
+    cursor: pointer;
 }
 
 .navdrawer .expansion-panel-toggler:hover, .navdrawer .expansion-panel-toggler:focus {

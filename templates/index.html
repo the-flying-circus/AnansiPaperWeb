@@ -9,11 +9,41 @@
     <script type="text/javascript" src="{% static "js/particles.min.js" %}"></script>
     <!-- stats.js lib -->
     <script type="text/javascript" src="{% static "js/particles.config.js" %}"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/js/standalone/selectize.min.js" integrity="sha256-+C0A5Ilqmu4QcSPxrlGpaZxJ04VjsRjKu+G82kl5UJk=" crossorigin="anonymous"></script>
+
+    <script type="text/javascript">
+    $(document).ready(function() {
+        $("#search").selectize({
+            valueField: 'id',
+            labelField: 'title',
+            searchField: 'title',
+            maxItems: 1,
+            create: false,
+            load: function(query, callback) {
+                if (!query.length) return callback();
+                $.ajax({
+                    url: "/web/search?q=" + encodeURIComponent(query),
+                    type: "GET",
+                    error: function() {
+                        callback();
+                    },
+                    success: function(res) {
+                        callback(res.articles);
+                    }
+                });
+            }
+        }).on("change", function() {
+            $("#search").closest("form").submit();
+        });
+    });
+    </script>
 {% endblock %}
 
 
 {% block css %}
     {{ block.super }}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/css/selectize.min.css" integrity="sha256-EhmqrzYSImS7269rfDxk4H+AHDyu/KwV1d8FDgIXScI=" crossorigin="anonymous" />
     <link rel="stylesheet" href="{% static "css/index.css"%}" />
 {% endblock %}
 
@@ -21,8 +51,11 @@
 <!-- landing text -->
 
 <div class="jumbotron vertical-center">
-	<div style="margin:auto">
-		<h1 id="landing-text" class="display-2" style="color:black; text-align: center">Anansi Paper Web</h1>
-	</div>
+    <div style="margin:auto">
+        <h1 id="landing-text" class="display-2" style="color:black; text-align: center">Anansi Paper Web</h1>
+        <form action="/web/node" method="GET">
+            <input id="search" name="id" type="search" class="form-control form-control-lg" placeholder="Search Anansi" />
+        </form>
+    </div>
 </div>
 {% endblock %}

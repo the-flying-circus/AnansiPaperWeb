@@ -31,7 +31,7 @@ def node(request):
 def search(request):
     query = request.GET.get("q")
     return JsonResponse({
-        "articles": list({"id": art.id, "title": art.title, "year": art.year, "authors": art.author_string} for art in Article.objects.filter(title__icontains=query).prefetch_related("authors"))
+        "articles": list({"id": art.id, "title": art.title, "year": art.year, "authors": art.author_string} for art in Article.objects.filter(Q(title__icontains=query) | Q(authors__first_name__icontains=query) | Q(authors__last_name__icontains=query)).prefetch_related("authors"))
     })
 
 

@@ -1,46 +1,46 @@
 /* ---- reset ---- */ 
 body{ 
-	margin:0;
-	font:normal 75% Arial, Helvetica, sans-serif;
+    margin:0;
+    font:normal 75% Arial, Helvetica, sans-serif;
 } 
 canvas{
-	display: block;
-	vertical-align: bottom;
+    display: block;
+    vertical-align: bottom;
 } 
 
 /* ---- particles.js container ---- */ 
 #particles-js{ 
-	position: absolute; 
-	width: 100%; 
-	height: 100%; 
-	top: 0;
-	bottom: 0;
-	left: 0;
-	right: 0;
-	background-color: #000000; 
-	background-image: url(""); 
-	background-repeat: no-repeat; 
-	background-size: cover; 
-	background-position: 50% 50%;
+    position: absolute; 
+    width: 100%; 
+    height: 100%; 
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: #000000; 
+    background-image: url(""); 
+    background-repeat: no-repeat; 
+    background-size: cover; 
+    background-position: 50% 50%;
 } 
 
 #landing-text{
-	text-align: center;
-	font-family: Josefin Sans;
+    text-align: center;
+    font-family: Josefin Sans;
 } 
 
 .top-middle{
-	height: 40%;  /* Fallback for browsers do NOT support vh unit */
-	height: 40vh;
-	/*margin-top: 13%;
-	margin-top: 13vh;*/
-	padding-top: 25vh;
-	padding-bottom: 0px;
-	/*margin-bottom: 13%;
-	margin-bottom: 13vh;*/
-	margin-bottom: 0px;
-	/*display: flex;*/
-	/*align-items: center;*/
+    height: 40%;  /* Fallback for browsers do NOT support vh unit */
+    height: 40vh;
+    /*margin-top: 13%;
+    margin-top: 13vh;*/
+    padding-top: 25vh;
+    padding-bottom: 0px;
+    /*margin-bottom: 13%;
+    margin-bottom: 13vh;*/
+    margin-bottom: 0px;
+    /*display: flex;*/
+    /*align-items: center;*/
 }
 
 .jumbotron {
@@ -50,33 +50,34 @@ canvas{
 }
 
 #search {
-	margin-left: 20vh;
-	margin-right: 20vh;
+    margin-left: 20vh;
+    margin-right: 20vh;
 }
 
 #eyes {
-	height: 60vh;
-	display: block;
-	margin-left: auto;
-	margin-right: auto;
-	padding-top: 20vh;
-	padding-bottom: 20vh;
+    height: 60vh;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    padding-top: 20vh;
+    padding-bottom: 20vh;
 }
 
 #directions {
-	display: none;
-	color: black;
-	margin-left: 30vh;
-	margin-right: 30vh;
-	font-family: Work Sans;
+    display: none;
+    color: black;
+    max-width: 600px;
+    margin: 0 auto;
+    font-family: Work Sans;
 }
 
 #dir-header {
-	margin-left: 10vh;
-	margin-right: 10vh;
-	margin-bottom: 6vh;
+    text-align: center;
+    max-width: 600px;
+    margin: 0 auto;
+    margin-bottom: 6vh;
 }
 
 #directions h2 {
-	text-align: center;
+    text-align: center;
 }

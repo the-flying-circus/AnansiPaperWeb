@@ -36,14 +36,24 @@
             dirs.style["margin-bottom"] = "8vh";
             dirs.style.display = "block";
 
+            $("#search")[0].selectize.focus();
         }
     </script>
 
     <script type="text/javascript">
-        function addArticle(id) {
-            $.get("/web/node?id=" + encodeURIComponent(id), function(data) {
-                console.log(data);
-            });
+        function addArticle(id, title) {
+            $(".article[data-id='" + id + "']").remove();
+            $("#selected-papers").append($("<div class='article' />").text(title).attr("data-id", id));
+        }
+
+        function addAuthor(id, name) {
+            $(".author[data-id='" + id + "']").remove();
+            $("#selected-authors").append($("<div class='author' />").text(name).attr("data-id", id));
+        }
+
+        function addKeyword(id) {
+            $(".keyword[data-id='" + id + "']").remove();
+            $("#selected-keywords").append($("<span class='keyword' />").text(id).attr("data-id", id));
         }
 
         $(document).ready(function() {
@@ -74,9 +84,26 @@
             }).on("change", function() {
                 var val = $("#search")[0].selectize.getValue();
                 if (val !== "") {
-                    addArticle(val);
+                    $.get("/web/node?id=" + encodeURIComponent(val), function(data) {
+                        addArticle(data.id, data.title);
+                        data.authors.forEach(function(item) {
+                            addAuthor(item.id, item.name);
+                        });
+                        data.keywords.forEach(function(item) {
+                            addKeyword(item);
+                        });
+                    });
+                    $("#search-container").css("width", "50%");
+                    setTimeout(function() {
+                        $("#search-container").css("float", "left");
+                        $("#list-container").fadeIn();
+                    }, 760);
                 }
                 $("#search")[0].selectize.clear();
+            });
+            $("#selected-keywords").on("click", ".keyword", function(e) {
+                e.preventDefault();
+                $(this).remove();
             });
         });
     </script>
@@ -90,8 +117,34 @@
 
     <style>
     #search-container {
-        transition: background-color 0.5s;
-        transition: min-height 0.5s;
+        width: 100%;
+        transition: background-color 0.5s, min-height 0.5s, width 0.75s;
+    }
+    #list-container {
+        padding: 15px;
+        color: white;
+        display: none;
+        width: 50%;
+        height: 100vh;
+        float: left;
+        overflow-y: auto;
+    }
+    #selected-papers, #selected-authors, #selected-keywords {
+        margin-bottom: 30px;
+        font-size: 1.2em;
+    }
+    #selected-keywords .keyword {
+        display: inline-block;
+        padding: 3px 5px;
+        margin: 3px;
+        border: 1px solid white;
+        border-radius: 2px;
+        cursor: pointer;
+        user-select: none;
+    }
+    #selected-keywords .keyword:hover {
+        border-color: #EF5350;
+        color: #EF5350;
     }
     .selectize-control .selectize-input {
         background-color: transparent;
@@ -119,7 +172,7 @@
 <div id="search-container" class="jumbotron top-middle">
     <div style="margin:auto">
         <h1 id="landing-text" class="display-2">Anansi Paper Web</h1>
-        <form action="/web/node" onclick="transition()" method="GET">
+        <form action="/web/node" onclick="transition()" method="GET" style="max-width: 500px; margin: 0 auto">
             <input id="search" name="id" type="search" class="form-control form-control-lg" placeholder="Search Anansi" />
         </form>
     </div>
@@ -138,6 +191,19 @@
                 </div>
             </div>
         </div>
+    </div>
+</div>
+
+<div id="list-container">
+    <h2>Selected Papers</h2>
+    <div id="selected-papers"></div>
+    <h2>Selected Authors</h2>
+    <div id="selected-authors"></div>
+    <h2>Selected Keywords</h2>
+    <div id="selected-keywords"></div>
+
+    <form method="POST">
+        <button type="submit" class="btn btn-primary btn-lg">Weave</button>
     </div>
 </div>
 

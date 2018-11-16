@@ -19,6 +19,10 @@ links = [
 ]
 
 $(document).ready(function() {
+    $("#navdrawer").navdrawer({
+        type: "permanent"
+    });
+
     function zoomed() {
         g.attr("transform", d3.event.transform);
     }

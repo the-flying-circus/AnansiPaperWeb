@@ -14,5 +14,21 @@
 
 {% block content %}
     {{ block.super }}
-    <svg id="web-container"></svg>
+    <div id="content-container">
+        <div id="navdrawer" class="navdrawer navdrawer-permanent">
+            <div class="navdrawer-content">
+                <div class="navdrawer-header">
+                    The Nav
+                </div>
+                <div class="navdrawer-nav">
+                    <ul>
+                        <li>Yo</li>
+                        <li>Yo</li>
+                        <li>Yo</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <svg id="web-container"></svg>
+    </div>
 {% endblock %}

@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand, CommandError
-from django.db.models import Count
+from django.db.models import Count, Q
 from django.core.cache import cache
 
 from web.models import Article, Author
@@ -23,3 +23,7 @@ class Command(BaseCommand):
         Article.objects.filter(id__in=all_ids).delete()
         cache.clear()
         self.stdout.write(self.style.SUCCESS('Cleanup completed! Removed {} object(s) with {} object(s) remaining.'.format(self.removed, Article.objects.count())))
+
+        deleted, _ = Article.objects.filter(Q(abstract__isnull=True) | Q(abstract="")).delete()
+
+        self.stdout.write(self.style.SUCCESS('Removed {} article(s) with no abstract!'.format(deleted)))

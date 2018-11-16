@@ -1,0 +1,169 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block js %}
+    {{ block.super }}
+    <script type="text/javascript">
+        var landing_state = true;
+    </script>
+    <!-- particles.js container -->
+    <div id="particles-js" style="z-index: -1"></div>
+    <!-- particles.js lib -->
+    <script type="text/javascript" src="{% static "js/particles.min.js" %}"></script>
+    <!-- stats.js lib -->
+    <script type="text/javascript" src="{% static "js/particles.config.js" %}"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/js/standalone/selectize.min.js" integrity="sha256-+C0A5Ilqmu4QcSPxrlGpaZxJ04VjsRjKu+G82kl5UJk=" crossorigin="anonymous"></script>
+
+    <script type="text/javascript">
+<<<<<<< HEAD
+    	function transition(){
+    		search_cont = document.getElementById("search-container");
+    		search_cont.style["background-color"] = "white";
+    		search_cont.style["margin-top"] = "0px";
+    		search_cont.style["margin-bottom"] = "0px";
+    		search_cont.style["padding-top"] = "25vh";
+    		search_cont.style["min-height"] = "100vh";
+    		search_cont.style.height = "100%";
+    		search_cont.style.top = "0";
+    		search_cont.style.bottom = "0";
+=======
+        function transition(){
+            search_cont = document.getElementById("search-container");
+            search_cont.style["background-color"] = "white";
+            search_cont.style["margin-top"] = "0px";
+            search_cont.style["margin-bottom"] = "0px";
+            search_cont.style["min-height"] = "100vh";
+            search_cont.style.height = "100%";
+            search_cont.style.top = "0";
+            search_cont.style.bottom = "0";
+>>>>>>> 9ee4df2e8f90aa3d940f424ce4cef49b0430f102
+
+            document.getElementById("landing-text").style.color = "black";
+
+<<<<<<< HEAD
+    		document.getElementById("eyes").style.display = "none";
+
+    		dirs = document.getElementById("directions");
+    		dirs.style.height = "24vh";
+    		dirs.style["margin-top"] = "8vh";
+    		dirs.style["margin-bottom"] = "8vh";
+    		dirs.style.display = "block";
+
+    	}
+=======
+        }
+>>>>>>> 9ee4df2e8f90aa3d940f424ce4cef49b0430f102
+    </script>
+
+    <script type="text/javascript">
+        function addArticle(id) {
+            $.get("/web/node?id=" + encodeURIComponent(id), function(data) {
+                console.log(data);
+            });
+        }
+
+        $(document).ready(function() {
+            $("#search").selectize({
+                valueField: 'id',
+                labelField: 'title',
+                searchField: ['title', 'authors', 'doi'],
+                maxItems: 1,
+                preload: true,
+                create: false,
+                render: {
+                    option: function(item, escape) {
+                        return '<div class="article"><span class="title">' + escape(item.title) + '</span><span class="year">' + (item.year ? escape(item.year) : '') + '</span> <span class="authors">' + escape(item.authors) + '</span></div>';
+                    }
+                },
+                load: function(query, callback) {
+                    $.ajax({
+                        url: "/web/search?q=" + encodeURIComponent(query),
+                        type: "GET",
+                        error: function() {
+                            callback();
+                        },
+                        success: function(res) {
+                            callback(res.articles);
+                        }
+                    });
+                }
+            }).on("change", function() {
+                var val = $("#search")[0].selectize.getValue();
+                if (val !== "") {
+                    addArticle(val);
+                }
+                $("#search")[0].selectize.clear();
+            });
+        });
+    </script>
+{% endblock %}
+
+
+{% block css %}
+    {{ block.super }}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/css/selectize.min.css" integrity="sha256-EhmqrzYSImS7269rfDxk4H+AHDyu/KwV1d8FDgIXScI=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="{% static "css/index.css"%}" />
+
+    <style>
+    #search-container {
+        transition: background-color 0.5s;
+        transition: min-height 0.5s;
+    }
+    .selectize-control .selectize-input {
+        background-color: transparent;
+        border: 1px solid white;
+    }
+    .article {
+        padding: 5px;
+    }
+    .authors {
+        color: grey;
+    }
+    .year {
+        color: #ccc;
+        float: right;
+    }
+    .selectize-control .selectize-dropdown:hover {
+        border-color: #d0d0d0;
+    }
+    </style>
+{% endblock %}
+
+{% block content %}
+<!-- landing text -->
+
+<div id="search-container" class="jumbotron top-middle">
+    <div style="margin:auto">
+        <h1 id="landing-text" class="display-2">Anansi Paper Web</h1>
+        <form action="/web/node" onclick="transition()" method="GET">
+            <input id="search" name="id" type="search" class="form-control form-control-lg" placeholder="Search Anansi" />
+        </form>
+    </div>
+    <div id="directions">
+		<p id="dir-header" class="h3">Explore. Enter any combination of paper titles, author names, and keywords into the search bar and Anansi will weave you a web.</p>
+		<div class="container">
+			<div class="row">
+				<div class="col">
+					<h2>Papers</h2>
+				</div>
+				<div class="col">
+					<h2>Authors</h2>
+				</div>
+				<div class="col">
+					<h2>Terms</h2>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<img id="eyes" src={% static "png/anansi.png"%} />
+
+<<<<<<< HEAD
+=======
+<div id="directions">
+    <h2>Here's some info on how to use our search.</h2>
+</div>
+>>>>>>> 9ee4df2e8f90aa3d940f424ce4cef49b0430f102
+{% endblock %}

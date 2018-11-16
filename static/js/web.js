@@ -1,15 +1,15 @@
 var nodes;
 var links;
 
-$.get("/web/graph", function(data) {
-    nodes = data.nodes;
-    links = data.edges;
-    main();
-});
-
 $(document).ready(function() {
     $("#navdrawer").navdrawer({
         type: "permanent"
+    });
+
+    $.get("/web/graph?nodes=" + encodeURIComponent($("#id_nodes").val()), function(data) {
+        nodes = data.nodes;
+        links = data.edges;
+        main();
     });
 });
 
@@ -101,7 +101,7 @@ function main() {
     }
 
     function getLinkColor(node, link) {
-        return isNeighborLink(node, link) ? "white" : "#ccc";
+        return isNeighborLink(node, link) ? "#bbb" : "#888";
     }
 
     function getNeighbors(node) {

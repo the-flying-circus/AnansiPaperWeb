@@ -123,6 +123,17 @@
                     $(this).remove();
                 });
             });
+            $("#weave").on("submit", function(e) {
+                $("#id_articles").val($("#selected-papers .article").map(function() {
+                    return $(this).attr("data-id");
+                }).get().join(","));
+                $("#id_authors").val($("#selected-authors .author").map(function() {
+                    return $(this).attr("data-id");
+                }).get().join(","));
+                $("#id_keywords").val($("#selected-keywords .keyword").map(function() {
+                    return $(this).text();
+                }).get().join(","));
+            });
         });
     </script>
 {% endblock %}
@@ -255,7 +266,7 @@
     <h2>Selected Keywords</h2>
     <div id="selected-keywords"></div>
 
-    <form method="POST">
+    <form id="weave" method="POST">
         <input type="hidden" id="id_articles" name="articles" />
         <input type="hidden" id="id_authors" name="authors" />
         <input type="hidden" id="id_keywords" name="keywords" />

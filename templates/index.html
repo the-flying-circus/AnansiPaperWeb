@@ -40,10 +40,20 @@
     </script>
 
     <script type="text/javascript">
+        var articles = [];
+        var authors = [];
+        var keywords = [];
+
         function addArticle(id) {
-            $.get("/web/node?id=" + encodeURIComponent(id), function(data) {
-                console.log(data);
-            });
+            articles.push(id);
+        }
+
+        function addAuthor(id) {
+            authors.push(id);
+        }
+
+        function addKeyword(id) {
+            keywords.push(id);
         }
 
         $(document).ready(function() {
@@ -74,7 +84,20 @@
             }).on("change", function() {
                 var val = $("#search")[0].selectize.getValue();
                 if (val !== "") {
-                    addArticle(val);
+                    $.get("/web/node?id=" + encodeURIComponent(val), function(data) {
+                        addArticle(data.id);
+                        data.authors.forEach(function(item) {
+                            addAuthor(item.id);
+                        });
+                        data.keywords.forEach(function(item) {
+                            addKeyword(item);
+                        });
+                    });
+                    $("#search-container").css("width", "50%");
+                    setTimeout(function() {
+                        $("#search-container").css("float", "left");
+                        $("#list-container").fadeIn();
+                    }, 760);
                 }
                 $("#search")[0].selectize.clear();
             });
@@ -90,8 +113,15 @@
 
     <style>
     #search-container {
-        transition: background-color 0.5s;
-        transition: min-height 0.5s;
+        width: 100%;
+        transition: background-color 0.5s, min-height 0.5s, width 0.75s;
+    }
+    #list-container {
+        padding: 15px;
+        color: white;
+        display: none;
+        width: 50%;
+        float: left;
     }
     .selectize-control .selectize-input {
         background-color: transparent;
@@ -139,6 +169,12 @@
             </div>
         </div>
     </div>
+</div>
+
+<div id="list-container">
+    <h2>Selected Papers</h2>
+    <h2>Selected Authors</h2>
+    <h2>Selected Keywords</h2>
 </div>
 
 <img id="eyes" src={% static "png/anansi.png"%} />

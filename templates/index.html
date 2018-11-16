@@ -71,6 +71,14 @@
     <link rel="stylesheet" href="{% static "css/index.css"%}" />
 
     <style>
+    #search-container {
+        transition: background-color 0.5s;
+        transition: min-height 0.5s;
+    }
+    .selectize-control .selectize-input {
+        background-color: transparent;
+        border: 1px solid white;
+    }
     .article {
         padding: 5px;
     }
@@ -87,5 +95,11 @@
             <input id="search" name="id" type="search" class="form-control form-control-lg" placeholder="Search Anansi" />
         </form>
     </div>
+</div>
+
+<img id="eyes" src={% static "png/anansi.png"%} />
+
+<div id="directions">
+	<h2>Here's some info on how to use our search.</h2>
 </div>
 {% endblock %}

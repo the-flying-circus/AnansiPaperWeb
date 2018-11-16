@@ -35,6 +35,26 @@ class Article(models.Model):
     # cited is all the other papers that cite this paper
     cites = models.ManyToManyField("Article", related_name="cited")
 
+    @property
+    def label(self):
+        suffix = " et al." if self.authors.count() > 1 else ""
+        if self.last_author:
+            prefix = self.last_author.last_name
+        elif self.authors.first():
+            prefix = self.authors.first().last_name
+        else:
+            prefix = "(no author)"
+        return prefix + suffix
+
+    @property
+    def group(self):
+        if self.last_author:
+            return self.last_author.id
+        elif self.authors.first():
+            return self.authors.first().id
+        else:
+            return 0
+
     def __str__(self):
         return self.title
 

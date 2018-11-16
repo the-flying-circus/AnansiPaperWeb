@@ -1,5 +1,5 @@
 from .models import Article, Keyword
-from django.db.models import Count, Case, When, Value, IntegerField
+from django.db.models import Count, Case, When, Value, IntegerField, Q
 from django.core.cache import cache
 
 CENTRAL_AUTHOR_TO_TITLE_THRESH = 0.3
@@ -204,7 +204,7 @@ def getGraph(titles, authors, keywords):
 
 
 def getGraphAlt(titles, authors, keywords):
-    a = Article.objects.filter(id__in=titles)
+    a = Article.objects.filter(Q(id__in=titles) | Q(authors__in=authors) | Q(keywords__keyword__in=keywords))
     a |= Article.objects.filter(cites__in=a)
     a |= Article.objects.filter(cited__in=a)
     a |= Article.objects.filter(cites__in=a)

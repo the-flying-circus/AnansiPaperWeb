@@ -13,8 +13,8 @@ NODE_KILL_DEPTH_THRESH = 3
 
 def findCentral(titles, authors, keywords):
     """
-    :param titles: plaintext article title (must match exactly)
-    :param authors: tuples of plaintext (firstname, lastname)
+    :param titles: article ids
+    :param authors: author ids
     :param keywords: plaintext keywords that are in the db
     :return: queryset of article objects that are central
     """
@@ -22,13 +22,13 @@ def findCentral(titles, authors, keywords):
     # first, all titles are automatically centrals
     centrals = []
     if titles:
-        centrals = Article.objects.filter(title__in=titles)
+        centrals = Article.objects.filter(id__in=titles)
         # print('found matching articles: ')
         # print(centrals)
 
     if authors:
         # if there's only authors
-        authorPapers = Article.objects.filter(authors__first_name__in=map(lambda x: x[0], authors), authors__last_name__in=map(lambda x: x[1], authors))
+        authorPapers = Article.objects.filter(id__in=authors)
         # print('found author papers: ')
         # print(authorPapers)
         if not titles and not keywords:
@@ -187,7 +187,7 @@ def traverse(centralNodes, keywords):
     return Article.objects.filter(id__in=foundNodes).distinct().all()
 
 
-def search(titles, authors, keywords):
+def getGraph(titles, authors, keywords):
     centrals = findCentral(titles, authors, keywords)
     print(centrals)
     print(centrals.count())

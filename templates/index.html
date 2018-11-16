@@ -66,7 +66,10 @@
                 create: false,
                 render: {
                     option: function(item, escape) {
-                        return '<div class="article"><span class="title">' + escape(item.title) + '</span><span class="year">' + (item.year ? escape(item.year) : '') + '</span> <span class="authors">' + escape(item.authors) + '</span></div>';
+                        if (item.type == "article") {
+                            return '<div class="article"><span class="title">' + escape(item.title) + '</span><span class="year">' + (item.year ? escape(item.year) : '') + '</span> <span class="authors">' + escape(item.authors) + '</span></div>';
+                        }
+                        return '<div class="author"><i class="fa fa-user"></i> <span class="title">' + escape(item.title) + '</span></div>';
                     }
                 },
                 load: function(query, callback) {
@@ -77,22 +80,20 @@
                             callback();
                         },
                         success: function(res) {
-                            callback(res.articles);
+                            callback(res.articles.concat(res.authors));
                         }
                     });
                 }
             }).on("change", function() {
                 var val = $("#search")[0].selectize.getValue();
                 if (val !== "") {
-                    $.get("/web/node?id=" + encodeURIComponent(val), function(data) {
-                        addArticle(data.id, data.title);
-                        data.authors.forEach(function(item) {
-                            addAuthor(item.id, item.name);
-                        });
-                        data.keywords.forEach(function(item) {
-                            addKeyword(item);
-                        });
-                    });
+                    var article = $("#search")[0].selectize.options[val];
+                    if (article.type == "article") {
+                        addArticle(article.id, article.title);
+                    }
+                    else {
+                        addAuthor(article.id, article.title);
+                    }
                     $("#search-container").css("width", "50%");
                     setTimeout(function() {
                         $("#search-container").css("float", "left");
@@ -180,7 +181,7 @@
         background-color: transparent;
         border: 1px solid white;
     }
-    .article {
+    .selectize-dropdown .article, .selectize-dropdown .author {
         padding: 5px;
     }
     .authors {

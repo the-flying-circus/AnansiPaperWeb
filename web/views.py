@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from django.db.models import Q
 
-from .models import Article
+from .models import Article, Author
 
 
 def node(request):
@@ -33,7 +33,8 @@ def search(request):
     query = request.GET.get("q")
     articles = Article.objects.filter(Q(title__icontains=query) | Q(authors__first_name__icontains=query) | Q(authors__last_name__icontains=query) | Q(doi__icontains=query)).order_by("-year")[:100]
     return JsonResponse({
-        "articles": list({"id": art.id, "title": art.title, "year": art.year, "authors": art.author_string, "doi": art.doi} for art in articles.prefetch_related("authors"))
+        "articles": list({"type": "article", "id": art.id, "title": art.title, "year": art.year, "authors": art.author_string, "doi": art.doi} for art in articles.prefetch_related("authors")),
+        "authors": list({"type": "author", "id": aut.id, "title": aut.full_name} for aut in Author.objects.filter(Q(first_name__icontains=query) | Q(last_name__icontains=query)))
     })
 
 

@@ -9,6 +9,7 @@ $(document).ready(function() {
     $.get("/web/graph?nodes=" + encodeURIComponent($("#id_nodes").val()), function(data) {
         nodes = data.nodes;
         links = data.edges;
+        $("#loading-wrapper").remove();
         main();
     });
 });
@@ -50,6 +51,10 @@ function main() {
         .attr('d', 'M0,-5L10,0L0,5');
 
     const g = svg.append("g");
+
+    const selectionMarker = g.append("circle")
+        .attr('r', 4)
+        .attr('fill', 'red');
 
     const simulation = d3.forceSimulation()
         .force("charge", d3.forceManyBody().strength(-100))
@@ -127,6 +132,7 @@ function main() {
         textElements.attr("fill", node => getTextColor(node, neighbors));
         linkElements.attr("stroke", link => getLinkColor(selectedNode, link));
         svg.transition().duration(500).call(zoom.transform, transitionFocus);
+        selectionMarker.attr("cx", node.x).attr("cy", node.y);
 
         $.get("/web/node?id=" + selectedNode.id, function(data) {
             $sidedrawerTitle.text(data.title);

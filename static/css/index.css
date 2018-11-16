@@ -40,3 +40,9 @@ canvas{
 	display: flex;
 	align-items: center;
 }
+
+.jumbotron {
+    color: white;
+    text-align: center;
+    background-color: transparent;
+}

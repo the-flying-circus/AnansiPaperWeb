@@ -65,6 +65,8 @@
         }
 
         $(document).ready(function() {
+            $("#eyes").css("display", "block")
+                .animate({opacity: 1}, 1000);
             $("#search").selectize({
                 valueField: 'id',
                 labelField: 'title',

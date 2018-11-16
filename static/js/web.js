@@ -19,34 +19,38 @@ links = [
 ]
 
 $(document).ready(function() {
+    function zoomed() {
+        g.attr("transform", d3.event.transform);
+    }
+
     const $container = $("#web-container");
     const width = $container.width();
     const height = $container.height();
 
     const svg = d3.select("#web-container")
         .attr("width", width)
-        .attr("height", height);
+        .attr("height", height)
+        .call(d3.zoom().scaleExtent([1, 10]).on("zoom", zoomed));
+
+    const g = svg.append("g");
 
     const simulation = d3.forceSimulation()
         .force("charge", d3.forceManyBody().strength(-100))
         .force("center", d3.forceCenter(width / 2, height / 2));
 
-    const linkElements = svg.append("g")
-        .selectAll("line")
+    const linkElements = g.selectAll("line")
         .data(links)
         .enter().append("line")
         .attr("stroke-width", 1)
         .attr("stroke", "black");
 
-    const nodeElements = svg.append("g")
-        .selectAll("circle")
+    const nodeElements = g.selectAll("circle")
         .data(nodes)
         .enter().append("circle")
             .attr("r", 10)
             .attr("fill", "grey");
 
-    const textElements = svg.append("g")
-        .selectAll("text")
+    const textElements = g.selectAll("text")
         .data(nodes)
         .enter().append("text")
             .text(node => node.label)
@@ -115,12 +119,6 @@ $(document).ready(function() {
         const width = $container.width();
         const height = $container.height();
         svg.attr("width", width).attr("height", height);
-        simulation.force("center", d3.forceCenter(width / 2, height / 2));
+        //simulation.force("center", d3.forceCenter(width / 2, height / 2));
     });
-
-    function zoomed() {
-        svg.attr("transform", "translate(" + d3.event.transform.x + "," + d3.event.transform.y + ")scale(" + d3.event.transform.k + ")");
-    }
-
-    svg.call(d3.zoom().on("zoom", zoomed));
 });

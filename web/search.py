@@ -66,7 +66,7 @@ def calcScore(node, foundNodes, keywords):
 
     connectionPoints = 5 * found.filter(cites=node).count() + 1 * found.filter(cited=node).count()
 
-    keywordPoints = node.keywords.filter(keyword__in=keywords).count()
+    keywordPoints = node.keywords.filter(id__in=keywords).count()
 
     return connectionPoints * keywordPoints
 
@@ -81,7 +81,7 @@ def traverse(centralNodes, keywords):
 
     # populate the dict
     nodes = {}
-    firstLayer = (Article.objects.filter(cited=centralNodes) | Article.objects.filter(cites=centralNodes)).distinct()
+    firstLayer = (Article.objects.filter(cited__in=centralNodes) | Article.objects.filter(cites__in=centralNodes)).distinct()
     maxVal = 0  # max val ever seen
     for node in firstLayer:
         nodes[node.id] = (calcScore(node, foundNodes, keywords), 1)
@@ -89,15 +89,18 @@ def traverse(centralNodes, keywords):
             maxVal = nodes[node.id][0]
 
     while nodes:
+        print('found node count:', len(foundNodes))
+        print('in-process nodes: ', len(nodes))
         # find the largest node
         thisMax = next(iter(nodes.keys()))
         thisMaxVal = nodes[thisMax][0]
+        toKill = set()
         for node in nodes:
             thisVal = nodes[node][0]
 
             # they are too weak, they will be deleted
             if thisVal < maxVal * NODE_KILL_SCORE_THRESH:
-                del nodes[node]
+                toKill.add(node)
                 continue
 
             if thisVal > thisMaxVal:
@@ -106,6 +109,9 @@ def traverse(centralNodes, keywords):
 
             if thisMaxVal > maxVal:
                 maxVal = thisMaxVal
+
+        for dead in toKill:
+            del nodes[dead]
 
         # if it's a found max then keep it
         foundNodes.add(thisMax)
@@ -116,10 +122,12 @@ def traverse(centralNodes, keywords):
 
         maxObj = Article.objects.filter(id=thisMax).first()
         for child in (maxObj.cites.all() | maxObj.cited.all()).distinct():
+            if child.id in foundNodes:
+                continue
             if child.id in nodes:
                 oldVal = nodes[child.id]
             else:
-                oldVal = NODE_KILL_DEPTH_THRESH + 1
+                oldVal = (0, NODE_KILL_DEPTH_THRESH + 1)
             nodes[child.id] = (calcScore(child, foundNodes, keywords), min(oldVal[1], nodes[thisMax][1] + 1))
 
             # then update the scores of all the attached nodes to that node
@@ -127,7 +135,7 @@ def traverse(centralNodes, keywords):
                 if superChild.id in nodes:
                     oldVal = nodes[child.id]
                 else:
-                    oldVal = NODE_KILL_DEPTH_THRESH + 1
+                    oldVal = (0, NODE_KILL_DEPTH_THRESH + 1)
                 nodes[superChild.id] = (calcScore(superChild, foundNodes, keywords), min(oldVal[1], nodes[thisMax][1] + 2))
 
         # remove the found max from the pool
@@ -138,9 +146,14 @@ def traverse(centralNodes, keywords):
 
 def search(titles, authors, keywords):
     centrals = findCentral(titles, authors, keywords)
+    print(centrals)
+    print(centrals.count())
     centralKeys = Keyword.objects.filter(articles__in=centrals)
     searchKeys = Keyword.objects.filter(keyword__in=keywords)
-    allNodes = traverse(centrals, (centralKeys | searchKeys).distinct())
+    keywords = (centralKeys | searchKeys).distinct()
+    print(keywords)
+    print(keywords.count())
+    allNodes = traverse(centrals, keywords)
 
     return centrals, allNodes
 

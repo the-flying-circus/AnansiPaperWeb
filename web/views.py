@@ -33,3 +33,28 @@ def search(request):
     return JsonResponse({
         "articles": list(Article.objects.filter(title__icontains=query).values("id", "title"))
     })
+
+
+def graph(request):
+    nodes = Article.objects.all()[:10]
+
+    node_list = []
+    edge_list = []
+    for node in nodes:
+        node_list.append({
+            "id": node.id,
+            "label": node.title,
+            "title": node.title,
+            "isQuery": True,
+            "authors": ", ".join([author.full_name for author in node.authors.all()])
+        })
+        for other in node.cites.all():
+            edge_list.append({
+                "source": node.id,
+                "target": other.id
+            })
+
+    return JsonResponse({
+        "nodes": node_list,
+        "edges": edge_list
+    })

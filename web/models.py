@@ -6,6 +6,10 @@ class Author(models.Model):
     last_name = models.TextField()
     email = models.EmailField(null=True)
 
+    @property
+    def full_name(self):
+        return "{} {}".format(self.first_name, self.last_name)
+
     def __str__(self):
         return self.name
 

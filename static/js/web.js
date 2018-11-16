@@ -1,15 +1,15 @@
 var nodes;
 var links;
 
-$.get("/web/graph", function(data) {
-    nodes = data.nodes;
-    links = data.edges;
-    main();
-});
-
 $(document).ready(function() {
     $("#navdrawer").navdrawer({
         type: "permanent"
+    });
+
+    $.get("/web/graph?nodes=" + encodeURIComponent($("#id_nodes").val()), function(data) {
+        nodes = data.nodes;
+        links = data.edges;
+        main();
     });
 });
 

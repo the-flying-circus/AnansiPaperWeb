@@ -40,7 +40,7 @@ def search(request):
 
 
 def graph(request):
-    nodes = Article.objects.all()[:100]
+    nodes = Article.objects.filter(id__in=[x for x in request.GET.get("nodes", "").strip().split(",") if x])
 
     node_list = []
     edge_list = []

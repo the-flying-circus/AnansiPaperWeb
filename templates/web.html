@@ -14,5 +14,14 @@
 
 {% block content %}
     {{ block.super }}
-    <svg id="web-container"></svg>
+    <div id="content-container" class="container-fluid">
+        <div class="row">
+            <div id="sidebar" class="col-lg-4 col-xl-3">
+                <div>"hi"</div>
+            </div>
+            <div class="col">
+                <svg id="web-container"></svg>
+            </div>
+        </div>
+    </div>
 {% endblock %}

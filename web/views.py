@@ -3,6 +3,7 @@ from django.http import JsonResponse
 from django.db.models import Q
 
 from .models import Article
+from web.search import getGraph
 
 
 def node(request):
@@ -64,3 +65,9 @@ def graph(request):
         "edges": edge_list
     })
 
+
+def generateGraph(request):
+    articles = request.POST.get("articles").split(',').strip()
+    authors = request.POST.get("authors").split(',').strip()
+    keywords = request.POST.get("keywords").split(',').strip()
+    nodes = getGraph(articles, authors, keywords)

@@ -56,17 +56,35 @@
             $("#selected-keywords").append($("<span class='keyword' />").text(id).attr("data-id", id));
         }
 
+        function showSidebar() {
+            $("#search-container").css("width", "50%");
+            setTimeout(function() {
+                $("#search-container").css("float", "left");
+                $("#list-container").fadeIn();
+            }, 760);
+        }
+
         $(document).ready(function() {
+            $("#eyes").css("display", "block")
+                .animate({opacity: 1}, 1000);
             $("#search").selectize({
                 valueField: 'id',
                 labelField: 'title',
                 searchField: ['title', 'authors', 'doi'],
                 maxItems: 1,
                 preload: true,
-                create: false,
+                create: function(input) {
+                    addKeyword(input);
+                    showSidebar();
+                    this.blur();
+                    return null;
+                },
                 render: {
                     option: function(item, escape) {
-                        return '<div class="article"><span class="title">' + escape(item.title) + '</span><span class="year">' + (item.year ? escape(item.year) : '') + '</span> <span class="authors">' + escape(item.authors) + '</span></div>';
+                        if (item.type == "article") {
+                            return '<div class="article"><span class="title">' + escape(item.title) + '</span><span class="year">' + (item.year ? escape(item.year) : '') + '</span> <span class="authors">' + escape(item.authors) + '</span></div>';
+                        }
+                        return '<div class="author"><i class="fa fa-user"></i> <span class="title">' + escape(item.title) + '</span></div>';
                     }
                 },
                 load: function(query, callback) {
@@ -77,27 +95,21 @@
                             callback();
                         },
                         success: function(res) {
-                            callback(res.articles);
+                            callback(res.articles.concat(res.authors));
                         }
                     });
                 }
             }).on("change", function() {
                 var val = $("#search")[0].selectize.getValue();
                 if (val !== "") {
-                    $.get("/web/node?id=" + encodeURIComponent(val), function(data) {
-                        addArticle(data.id, data.title);
-                        data.authors.forEach(function(item) {
-                            addAuthor(item.id, item.name);
-                        });
-                        data.keywords.forEach(function(item) {
-                            addKeyword(item);
-                        });
-                    });
-                    $("#search-container").css("width", "50%");
-                    setTimeout(function() {
-                        $("#search-container").css("float", "left");
-                        $("#list-container").fadeIn();
-                    }, 760);
+                    var article = $("#search")[0].selectize.options[val];
+                    if (article.type == "article") {
+                        addArticle(article.id, article.title);
+                    }
+                    else {
+                        addAuthor(article.id, article.title);
+                    }
+                    showSidebar();
                 }
                 $("#search")[0].selectize.clear();
             });
@@ -107,7 +119,20 @@
             });
             $("#selected-papers, #selected-authors").on("click", ".article, .author", function(e) {
                 e.preventDefault();
-                $(this).remove();
+                $(this).slideUp("fast", function() {
+                    $(this).remove();
+                });
+            });
+            $("#weave").on("submit", function(e) {
+                $("#id_articles").val($("#selected-papers .article").map(function() {
+                    return $(this).attr("data-id");
+                }).get().join(","));
+                $("#id_authors").val($("#selected-authors .author").map(function() {
+                    return $(this).attr("data-id");
+                }).get().join(","));
+                $("#id_keywords").val($("#selected-keywords .keyword").map(function() {
+                    return $(this).text();
+                }).get().join(","));
             });
         });
     </script>
@@ -178,7 +203,7 @@
         background-color: transparent;
         border: 1px solid white;
     }
-    .article {
+    .selectize-dropdown .article, .selectize-dropdown .author, .selectize-dropdown .create {
         padding: 5px;
     }
     .authors {
@@ -241,7 +266,10 @@
     <h2>Selected Keywords</h2>
     <div id="selected-keywords"></div>
 
-    <form method="POST">
+    <form id="weave" method="POST">
+        <input type="hidden" id="id_articles" name="articles" />
+        <input type="hidden" id="id_authors" name="authors" />
+        <input type="hidden" id="id_keywords" name="keywords" />
         <button type="submit" class="btn btn-primary btn-lg">Weave</button>
     </div>
 </div>

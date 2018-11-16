@@ -139,13 +139,14 @@ function main() {
             $sidedrawerUrl.text(data.url);
             $sidedrawerUrl.attr("href", data.url);
             $sidedrawerAbstract.text(data.abstract);
-            $sidedrawerInCitations.html();
+            $sidedrawerInCitations.empty();
             for (var i = 0; i < data.inward.length; i++) {
                 const $citation = $(document.createElement("li"));
                 $citation.addClass("list-group-item");
                 $citation.text(data.inward[i].title);
                 $sidedrawerInCitations.append($citation);
             }
+            $sidedrawerOutCitations.empty();
             for (var i = 0; i < data.outward.length; i++) {
                 const $citation = $(document.createElement("li"));
                 $citation.addClass("list-group-item");

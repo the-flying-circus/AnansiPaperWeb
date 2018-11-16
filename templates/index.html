@@ -62,6 +62,15 @@
                 $("#search-container").css("float", "left");
                 $("#list-container").fadeIn();
             }, 760);
+
+            search_cont = document.getElementById("search-container");
+            search_cont.style["padding-top"] = "8vh"; 25 - 8
+
+            dirs = document.getElementById("directions");
+            dirs.style.height = "41vh";
+            dirs.style["margin-top"] = "8vh";
+            dirs.style["margin-bottom"] = "8vh";
+            dirs.style.display = "block";
         }
 
         $(document).ready(function() {
@@ -152,7 +161,9 @@
         transition: background-color 0.5s, min-height 0.5s, width 0.75s;
     }
     #list-container {
-        padding: 60px;
+    	padding-top: 8vh;
+        padding-left: 60px;
+        padding-right: 60px;
         color: white;
         display: none;
         width: 50%;
@@ -163,6 +174,11 @@
     h2 {
         font-family: Josefin Sans;
     }
+    #queries-header {
+	    text-align: center;
+	    font-family: Josefin Sans;
+	    margin-bottom: 10vh;
+	} 
     #selected-papers:empty:before {
         content: "No articles selected.";
         color: grey;
@@ -264,6 +280,7 @@
 </div>
 
 <div id="list-container">
+	<h1 id="queries-header" class="display-2">Queries</h1>
     <h2>Selected Papers</h2>
     <div id="selected-papers"></div>
     <h2>Selected Authors</h2>

@@ -37,21 +37,21 @@ class Article(models.Model):
 
     @property
     def label(self):
-        suffix = " et al." if node.authors.count() > 1 else ""
-        if node.last_author:
-            prefix = node.last_author.last_name
-        elif node.authors.first():
-            prefix = node.authors.first().last_name
+        suffix = " et al." if self.authors.count() > 1 else ""
+        if self.last_author:
+            prefix = self.last_author.last_name
+        elif self.authors.first():
+            prefix = self.authors.first().last_name
         else:
             prefix = "(no author)"
         return prefix + suffix
 
     @property
     def group(self):
-        if node.last_author:
-            return node.last_author.id
-        elif node.authors.first():
-            return node.authors.first().id
+        if self.last_author:
+            return self.last_author.id
+        elif self.authors.first():
+            return self.authors.first().id
         else:
             return 0
 

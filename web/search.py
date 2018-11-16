@@ -185,7 +185,7 @@ def traverse(centralNodes, keywords):
 
 
 def getGraph(titles, authors, keywords):
-    key = "search:graph:{}:{}:{}".format(",".join(int(x) for x in titles), ",".join(int(x) for x in authors), ",".join(keywords))
+    key = "search:graph:{}:{}:{}".format(",".join(str(x) for x in titles), ",".join(str(x) for x in authors), ",".join(keywords))
     cached = cache.get(key)
     if cached:
         return cached

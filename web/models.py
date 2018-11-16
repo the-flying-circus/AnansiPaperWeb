@@ -11,7 +11,7 @@ class Author(models.Model):
         return "{} {}".format(self.first_name, self.last_name)
 
     def __str__(self):
-        return self.name
+        return self.full_name
 
 
 class Journal(models.Model):

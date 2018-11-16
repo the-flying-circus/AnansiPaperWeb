@@ -26,3 +26,10 @@ def node(request):
         "outward": list(article.cites.values("id", "title")),
         "inward": list(article.cited.values("id", "title"))
     })
+
+
+def search(request):
+    query = request.GET.get("q")
+    return JsonResponse({
+        "articles": list(Article.objects.filter(title__icontains=query).values("id", "title"))
+    })

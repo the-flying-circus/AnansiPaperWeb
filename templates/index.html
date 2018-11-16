@@ -28,6 +28,14 @@
 
             document.getElementById("landing-text").style.color = "black";
 
+            document.getElementById("eyes").style.display = "none";
+
+            dirs = document.getElementById("directions");
+            dirs.style.height = "24vh";
+            dirs.style["margin-top"] = "8vh";
+            dirs.style["margin-bottom"] = "8vh";
+            dirs.style.display = "block";
+
         }
     </script>
 
@@ -108,12 +116,28 @@
 {% block content %}
 <!-- landing text -->
 
-<div id="search-container" class="jumbotron vertical-center">
+<div id="search-container" class="jumbotron top-middle">
     <div style="margin:auto">
         <h1 id="landing-text" class="display-2">Anansi Paper Web</h1>
         <form action="/web/node" onclick="transition()" method="GET">
             <input id="search" name="id" type="search" class="form-control form-control-lg" placeholder="Search Anansi" />
         </form>
+    </div>
+    <div id="directions">
+        <p id="dir-header" class="h3">Explore. Enter any combination of paper titles, author names, and keywords into the search bar and Anansi will weave you a web.</p>
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    <h2>Papers</h2>
+                </div>
+                <div class="col">
+                    <h2>Authors</h2>
+                </div>
+                <div class="col">
+                    <h2>Terms</h2>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 

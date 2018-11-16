@@ -24,9 +24,15 @@ class Article(models.Model):
         return self.title
 
 
-class Keywords(models.Model):
+class Keyword(models.Model):
     keyword = models.TextField()
-    articles = models.ManyToManyField(Article, related_name="keywords")
+    articles = models.ManyToManyField(Article, related_name="keywords", through="KeywordRank")
 
     def __str__(self):
         return self.keyword
+
+
+class KeywordRank(models.Model):
+    article = models.ForeignKey(Article, on_delete=models.CASCADE)
+    keyword = models.ForeignKey(Keyword, on_delete=models.CASCADE)
+    rank = models.FloatField()

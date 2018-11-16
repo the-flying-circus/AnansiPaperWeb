@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.http import JsonResponse
 from django.db.models import Q
+from django.core.cache import cache
 
 from web.search import getGraph
 from .models import Article, Author
@@ -32,15 +33,28 @@ def node(request):
 
 def search(request):
     query = request.GET.get("q")
+    key = "search:searchbar:{}".format(query)
+    cached = cache.get(key)
+    if cached:
+        return JsonResponse(cached)
     articles = Article.objects.filter(Q(title__icontains=query) | Q(authors__first_name__icontains=query) | Q(authors__last_name__icontains=query) | Q(doi__icontains=query)).order_by("-year")[:1000]
-    return JsonResponse({
+    out = {
         "articles": list({"type": "article", "id": art.id, "title": art.title, "year": art.year, "authors": art.author_string, "doi": art.doi} for art in articles.prefetch_related("authors")),
         "authors": list({"type": "author", "id": aut.id, "title": aut.full_name} for aut in Author.objects.filter(Q(first_name__icontains=query) | Q(last_name__icontains=query)))
-    })
+    }
+    cache.set(key, out, None)
+    return JsonResponse(out)
 
 
 def graph(request):
-    nodes = Article.objects.filter(id__in=[x for x in request.GET.get("nodes", "").strip().split(",") if x])
+    nodes = request.GET.get("nodes", "").strip()
+    key = "graph:{}".format(nodes)
+
+    cached = cache.get(key)
+    if cached:
+        return JsonResponse(cached)
+
+    nodes = Article.objects.filter(id__in=[x for x in nodes.split(",") if x])
 
     if nodes.count() <= 0:
         nodes = Article.objects.all()[:100]
@@ -64,10 +78,14 @@ def graph(request):
                 "target": other.id
             })
 
-    return JsonResponse({
+    out = {
         "nodes": node_list,
         "edges": edge_list
-    })
+    }
+
+    cache.set(key, out, None)
+
+    return JsonResponse(out)
 
 
 def generate_graph(request):
@@ -76,7 +94,7 @@ def generate_graph(request):
     keywords = [x for x in request.POST.get("keywords", "").strip().split(',') if x]
     if articles or authors or keywords:
         _, nodes = getGraph(articles, authors, keywords)
-        nodes = ",".join(str(x) for x in nodes.values_list("id", flat=True))
+        nodes = ",".join(str(x) for x in nodes)
     else:
         nodes = ""
 

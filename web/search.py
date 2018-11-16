@@ -2,6 +2,7 @@ import math
 
 from .models import Article, Author, Keyword
 from django.db.models import Count, Case, When
+from django.core.cache import cache
 
 CENTRAL_AUTHOR_TO_TITLE_THRESH = 0.3
 CENTRAL_AUTHOR_TO_KEYWORD_THRESH = 0.3
@@ -93,8 +94,6 @@ def traverse(centralNodes, keywords):
             maxVal = useScore(nodes[node.id][0])
 
     while nodes:
-        print('found node count:', len(foundNodes))
-        print('in-process nodes: ', len(nodes))
         # find the largest node
         thisMax = next(iter(nodes.keys()))
         thisMaxVal = useScore(nodes[thisMax][0])
@@ -188,15 +187,17 @@ def traverse(centralNodes, keywords):
 
 
 def getGraph(titles, authors, keywords):
+    key = "search:graph:{}:{}:{}".format(titles, authors, keywords)
+    cached = cache.get(key)
+    if cached:
+        return cached
+
     centrals = findCentral(titles, authors, keywords)
-    print(centrals)
-    print(centrals.count())
     centralKeys = Keyword.objects.filter(articles__in=centrals)
     searchKeys = Keyword.objects.filter(keyword__in=keywords)
     keywords = (centralKeys | searchKeys).distinct()
-    print(keywords)
-    print(keywords.count())
     allNodes = traverse(centrals, keywords)
 
-    return centrals, allNodes
-
+    out = (list(centrals.values_list("id", flat=True)), list(allNodes.values_list("id", flat=True)))
+    cache.set(key, out, None)
+    return out

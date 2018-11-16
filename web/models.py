@@ -2,7 +2,8 @@ from django.db import models
 
 
 class Author(models.Model):
-    name = models.TextField()
+    first_name = models.TextField()
+    last_name = models.TextField()
     email = models.EmailField(null=True)
 
     def __str__(self):

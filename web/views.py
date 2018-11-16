@@ -47,7 +47,8 @@ def graph(request):
             "title": node.title,
             "isQuery": True,
             "authors": node.author_string,
-            "group": node.group
+            "group": node.group,
+            "indegree": node.cited.count()
         })
 
         for other in node.cites.filter(id__in=nodes.values_list("id", flat=True)):

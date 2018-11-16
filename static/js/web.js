@@ -33,6 +33,16 @@ $(document).ready(function() {
         .attr("width", width)
         .attr("height", height)
         .call(zoom.scaleExtent([1, 8]).on("zoom", zoomed));
+    svg.append('svg:defs').append('svg:marker')
+        .attr('id', 'end-arrow')
+        .attr('viewBox', '0 -5 10 10')
+        .attr('refX', 34)
+        .attr('markerWidth', 4)
+        .attr('markerHeight', 4)
+        .attr('orient', 'auto')
+        .append('svg:path')
+        .attr('d', 'M0,-5L10,0L0,5')
+        .attr('fill', '#000');
 
     const g = svg.append("g");
 
@@ -44,7 +54,8 @@ $(document).ready(function() {
         .data(links)
         .enter().append("line")
         .attr("stroke-width", 1)
-        .attr("stroke", "black");
+        .attr("stroke", "black")
+        .attr("marker-end", "url(#end-arrow)");
 
     const nodeElements = g.selectAll("circle")
         .data(nodes)
@@ -92,7 +103,7 @@ $(document).ready(function() {
     function transitionFocus() {
         return d3.zoomIdentity
             .translate(width / 2, height / 2)
-            .scale(2)
+            .scale(4)
             .translate(-selectedNode.x, -selectedNode.y);
     }
 

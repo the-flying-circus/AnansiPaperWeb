@@ -3,26 +3,113 @@
 
 {% block js %}
     {{ block.super }}
+    <script type="text/javascript">
+    	var landing_state = true;
+    </script>
     <!-- particles.js container -->
     <div id="particles-js" style="z-index: -1"></div>
     <!-- particles.js lib -->
     <script type="text/javascript" src="{% static "js/particles.min.js" %}"></script>
     <!-- stats.js lib -->
     <script type="text/javascript" src="{% static "js/particles.config.js" %}"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/js/standalone/selectize.min.js" integrity="sha256-+C0A5Ilqmu4QcSPxrlGpaZxJ04VjsRjKu+G82kl5UJk=" crossorigin="anonymous"></script>
+
+    <script type="text/javascript">
+    	function transition(){
+    		search_cont = document.getElementById("search-container");
+    		search_cont.style["background-color"] = "white";
+    		search_cont.style["margin-top"] = "0px";
+    		search_cont.style["margin-bottom"] = "0px";
+    		search_cont.style["min-height"] = "100vh";
+    		search_cont.style.height = "100%";
+    		search_cont.style.top = "0";
+    		search_cont.style.bottom = "0";
+
+    		document.getElementById("landing-text").style.color = "black";
+
+    	}
+    </script>
+
+    <script type="text/javascript">
+	    $(document).ready(function() {
+	        $("#search").selectize({
+	            valueField: 'id',
+	            labelField: 'title',
+	            searchField: ['title', 'authors'],
+	            maxItems: 1,
+	            create: false,
+	            render: {
+	                option: function(item, escape) {
+                        return '<div class="article"><span class="title">' + escape(item.title) + '</span><span class="year">' + escape(item.year) + '</span> <span class="authors">' + escape(item.authors) + '</span></div>';
+	                }
+	            },
+	            load: function(query, callback) {
+	                if (!query.length) return callback();
+	                $.ajax({
+	                    url: "/web/search?q=" + encodeURIComponent(query),
+	                    type: "GET",
+	                    error: function() {
+	                        callback();
+	                    },
+	                    success: function(res) {
+	                        callback(res.articles);
+	                    }
+	                });
+	            }
+	        }).on("change", function() {
+	            $("#search").closest("form").submit();
+	        });
+	    });
+    </script>
 {% endblock %}
 
 
 {% block css %}
     {{ block.super }}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/css/selectize.min.css" integrity="sha256-EhmqrzYSImS7269rfDxk4H+AHDyu/KwV1d8FDgIXScI=" crossorigin="anonymous" />
     <link rel="stylesheet" href="{% static "css/index.css"%}" />
+
+    <style>
+    #search-container {
+        transition: background-color 0.5s;
+        transition: min-height 0.5s;
+    }
+    .selectize-control .selectize-input {
+        background-color: transparent;
+        border: 1px solid white;
+    }
+    .article {
+        padding: 5px;
+    }
+    .authors {
+        color: grey;
+    }
+    .year {
+        color: #ccc;
+        float: right;
+    }
+    .selectize-control .selectize-dropdown:hover {
+        border-color: #d0d0d0;
+    }
+    </style>
 {% endblock %}
 
 {% block content %}
 <!-- landing text -->
 
-<div class="jumbotron vertical-center">
-	<div style="margin:auto">
-		<h1 id="landing-text" class="display-2" style="color:black; text-align: center">Anansi Paper Web</h1>
-	</div>
+<div id="search-container" class="jumbotron vertical-center">
+    <div style="margin:auto">
+        <h1 id="landing-text" class="display-2">Anansi Paper Web</h1>
+        <form action="/web/node" onclick="transition()" method="GET">
+            <input id="search" name="id" type="search" class="form-control form-control-lg" placeholder="Search Anansi" />
+        </form>
+    </div>
+</div>
+
+<img id="eyes" src={% static "png/anansi.png"%} />
+
+<div id="directions">
+	<h2>Here's some info on how to use our search.</h2>
 </div>
 {% endblock %}

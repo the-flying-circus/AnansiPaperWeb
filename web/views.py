@@ -31,6 +31,33 @@ def node(request):
 def search(request):
     query = request.GET.get("q")
     return JsonResponse({
-        "articles": list(Article.objects.filter(title__icontains=query).values("id", "title"))
+        "articles": list({"id": art.id, "title": art.title, "year": art.year, "authors": art.author_string} for art in Article.objects.filter(Q(title__icontains=query) | Q(authors__first_name__icontains=query) | Q(authors__last_name__icontains=query)).prefetch_related("authors"))
+    })
+
+
+def graph(request):
+    nodes = Article.objects.all()[:100]
+
+    node_list = []
+    edge_list = []
+    for node in nodes.prefetch_related("authors"):
+        node_list.append({
+            "id": node.id,
+            "label": node.label,
+            "title": node.title,
+            "isQuery": True,
+            "authors": node.author_string,
+            "group": node.group
+        })
+
+        for other in node.cites.filter(id__in=nodes.values_list("id", flat=True)):
+            edge_list.append({
+                "source": node.id,
+                "target": other.id
+            })
+
+    return JsonResponse({
+        "nodes": node_list,
+        "edges": edge_list
     })
 

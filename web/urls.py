@@ -9,5 +9,5 @@ urlpatterns = [
     path('search', views.search),
     path('graph', views.graph),
     path('node', views.node),
-    path('getGraph', views.getGraph)
+    path('generate_graph', views.generate_graph)
 ]

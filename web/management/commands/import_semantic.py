@@ -94,6 +94,7 @@ class Command(BaseCommand):
 
             # add authors
             authors = [x[0]['name'].strip() for x in result['authors']]
+            author_objects = []
             for author in authors:
                 try:
                     first, last = author.rsplit(' ', 1)
@@ -104,7 +105,13 @@ class Command(BaseCommand):
                     "first_name": first,
                     "last_name": last
                 })
+                author_objects.append(ath)
                 obj.authors.add(ath)
+
+            if author_objects:
+                obj.first_author = author_objects[0]
+                obj.last_author = author_objects[-1]
+                obj.save(update_fields=["first_author", "last_author"])
 
             self.total += 1
             self.stdout.write("Imported '{}'".format(title))

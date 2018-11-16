@@ -20,11 +20,14 @@ class Command(BaseCommand):
         else:
             abstract = None
         url = result.get('presentationUrl')
-        year = result['year']['text']
-        if year:
-            year = int(year)
-        else:
-            year = None
+        year = result.get('year')
+        if year is not None:
+            if not isinstance(year, int):
+                year = year['text']
+            if year:
+                year = int(year)
+            else:
+                year = None
 
         obj, _ = Article.objects.get_or_create(title__iexact=title, year__in=[year, None], defaults={
             'title': title,
@@ -44,7 +47,15 @@ class Command(BaseCommand):
         # add authors
         authors = [x[0]['name'].strip() for x in result['authors']]
         for author in authors:
-            ath, _ = Author.objects.get_or_create(name=author)
+            try:
+                first, last = author.rsplit(' ', 1)
+            except ValueError:
+                first = ''
+                last = author
+            ath, _ = Author.objects.get_or_create(first_name__iexact=first, last_name__iexact=last, defaults={
+                "first_name": first,
+                "last_name": last
+            })
             obj.authors.add(ath)
 
         self.stdout.write("Imported '{}'".format(title))

@@ -88,11 +88,12 @@ canvas{
     text-align: center;
 }
 
+<<<<<<< HEAD
 #instr {
 	font-family: Work Sans;
 	font-weight: 200px;
 	text-align: center;
-
+=======
 .form-control {
     border: none;
 }
@@ -100,4 +101,5 @@ canvas{
 .form-control:hover {
     border: none;
     box-shadow: none;
+>>>>>>> 5d04289b2fd3998f5b70512b24c7ded1c0e1bd68
 }

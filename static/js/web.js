@@ -38,7 +38,7 @@ function main() {
     svg.append('svg:defs').append('svg:marker')
         .attr('id', 'end-arrow')
         .attr('viewBox', '0 -5 10 10')
-        .attr('refX', 22)
+        .attr('refX', 60)
         .attr('markerWidth', 8)
         .attr('markerHeight', 8)
         .attr('orient', 'auto')
@@ -61,7 +61,7 @@ function main() {
     const nodeElements = g.selectAll("circle")
         .data(nodes)
         .enter().append("circle")
-            .attr("r", 10)
+            .attr("r", (node) => calcNodeRadius(node))
             .attr("fill", "grey")
             .attr("data-toggle", "popover")
             .attr("data-title", (node) => node.title)
@@ -72,7 +72,7 @@ function main() {
         .enter().append("text")
             .text(node => node.label)
             .attr("font-size", 14)
-            .attr("dx", 14)
+            .attr("dx", (node) => getLabelOffset(node))
             .attr("dy", 5);
 
     function isNeighborLink(node, link) {
@@ -85,6 +85,15 @@ function main() {
 
     function getTextColor(node, neighbors) {
         return neighbors.includes(node.id) ? "black" : "grey";
+    }
+
+    function calcNodeRadius(node) {
+        node.radius = 5 + Math.log(node.indegree + Math.E) * 8;
+        return node.radius;
+    }
+
+    function getLabelOffset(node) {
+        return 5 + node.radius;
     }
 
     function getLinkColor(node, link) {

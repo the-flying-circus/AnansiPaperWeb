@@ -63,7 +63,7 @@ class Command(BaseCommand):
             else:
                 journal = None
 
-            obj, _ = Article.objects.get_or_create(title__iexact=title, year__in=[year, None], doi__in=[doi, None], defaults={
+            obj, obj_created = Article.objects.get_or_create(title__iexact=title, year__in=[year, None], doi__in=[doi, None], defaults={
                 'title': title,
                 'abstract': abstract,
                 'url': url,
@@ -116,7 +116,7 @@ class Command(BaseCommand):
                 obj.save(update_fields=["first_author", "last_author"])
 
             self.total += 1
-            self.stdout.write("Imported '{}'".format(title))
+            self.stdout.write("Imported [{}] '{}'".format('+' if obj_created else '-', title))
 
         if depth > 0:
             for paper in raw_resp['citedPapers']['citations']:

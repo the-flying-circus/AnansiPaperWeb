@@ -40,7 +40,7 @@ def findCentral(titles, authors, keywords):
             # print(keywords)
 
             # get the papers from the authors with enough keywords
-            found = authorPapers.annotate(match_count=Count(Case(When(keywords__in=keywordsTitleObjs, then=1)))).filter(match_count__gte=CENTRAL_AUTHOR_TO_TITLE_THRESH)
+            found = authorPapers.annotate(match_count=Count(Case(When(keywords__in=keywordsTitleObjs, then=1), default=0))).filter(match_count__gte=CENTRAL_AUTHOR_TO_TITLE_THRESH)
             # print('found relevant papers from authors')
             # print(found)
 

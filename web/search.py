@@ -68,7 +68,11 @@ def calcScore(node, foundNodes, keywords):
 
     keywordPoints = node.keywords.filter(id__in=keywords).count()
 
-    return connectionPoints * keywordPoints
+    return connectionPoints, keywordPoints
+
+
+def useScore(scoreTuple):
+    return scoreTuple[0] * scoreTuple[1]
 
 
 def traverse(centralNodes, keywords):
@@ -85,18 +89,18 @@ def traverse(centralNodes, keywords):
     maxVal = 0  # max val ever seen
     for node in firstLayer:
         nodes[node.id] = (calcScore(node, foundNodes, keywords), 1)
-        if maxVal < nodes[node.id][0]:
-            maxVal = nodes[node.id][0]
+        if maxVal < useScore(nodes[node.id][0]):
+            maxVal = useScore(nodes[node.id][0])
 
     while nodes:
         print('found node count:', len(foundNodes))
         print('in-process nodes: ', len(nodes))
         # find the largest node
         thisMax = next(iter(nodes.keys()))
-        thisMaxVal = nodes[thisMax][0]
+        thisMaxVal = useScore(nodes[thisMax][0])
         toKill = set()
         for node in nodes:
-            thisVal = nodes[node][0]
+            thisVal = useScore(nodes[node][0])
 
             # they are too weak, they will be deleted
             if thisVal < maxVal * NODE_KILL_SCORE_THRESH:
@@ -105,7 +109,7 @@ def traverse(centralNodes, keywords):
 
             if thisVal > thisMaxVal:
                 thisMax = node
-                thisMaxVal = nodes[node][0]
+                thisMaxVal = thisVal
 
             if thisMaxVal > maxVal:
                 maxVal = thisMaxVal
@@ -121,27 +125,62 @@ def traverse(centralNodes, keywords):
             continue
 
         maxObj = Article.objects.filter(id=thisMax).first()
-        for child in (maxObj.cites.all() | maxObj.cited.all()).distinct():
+        for child in maxObj.cites.all():
             if child.id in foundNodes:
                 continue
+
             if child.id in nodes:
                 oldVal = nodes[child.id]
+                nodes[child.id] = ((oldVal[0][0] + 5, oldVal[0][1]), min(oldVal[1], nodes[thisMax][1] + 1))
             else:
-                oldVal = (0, NODE_KILL_DEPTH_THRESH + 1)
-            nodes[child.id] = (calcScore(child, foundNodes, keywords), min(oldVal[1], nodes[thisMax][1] + 1))
+                nodes[child.id] = (calcScore(child, foundNodes, keywords), nodes[thisMax][1] + 1)
 
             # then update the scores of all the attached nodes to that node
-            for superChild in (child.cites.all() | child.cited.all()).distinct():
+            for superChild in child.cites.all():
+                if superChild.id in foundNodes:
+                    continue
+
                 if superChild.id in nodes:
-                    oldVal = nodes[child.id]
-                else:
-                    oldVal = (0, NODE_KILL_DEPTH_THRESH + 1)
-                nodes[superChild.id] = (calcScore(superChild, foundNodes, keywords), min(oldVal[1], nodes[thisMax][1] + 2))
+                    oldVal = nodes[superChild.id]
+                    nodes[superChild.id] = ((oldVal[0][0] + 5, oldVal[0][1]), min(oldVal[1], nodes[thisMax][1] + 2))
+            for superChild in child.cited.all():
+                if superChild.id in foundNodes:
+                    continue
+
+                if superChild.id in nodes:
+                    oldVal = nodes[superChild.id]
+                    nodes[superChild.id] = ((oldVal[0][0] + 1, oldVal[0][1]), min(oldVal[1], nodes[thisMax][1] + 2))
+
+        for child in maxObj.cited.all():
+            if child.id in foundNodes:
+                continue
+
+            if child.id in nodes:
+                oldVal = nodes[child.id]
+                nodes[child.id] = ((oldVal[0][0] + 1, oldVal[0][1]), min(oldVal[1], nodes[thisMax][1] + 1))
+            else:
+                nodes[child.id] = (calcScore(child, foundNodes, keywords), nodes[thisMax][1] + 1)
+
+            # then update the scores of all the attached nodes to that node
+            for superChild in child.cites.all():
+                if superChild.id in foundNodes:
+                    continue
+
+                if superChild.id in nodes:
+                    oldVal = nodes[superChild.id]
+                    nodes[superChild.id] = ((oldVal[0][0] + 5, oldVal[0][1]), min(oldVal[1], nodes[thisMax][1] + 2))
+            for superChild in child.cited.all():
+                if superChild.id in foundNodes:
+                    continue
+
+                if superChild.id in nodes:
+                    oldVal = nodes[superChild.id]
+                    nodes[superChild.id] = ((oldVal[0][0] + 1, oldVal[0][1]), min(oldVal[1], nodes[thisMax][1] + 2))
 
         # remove the found max from the pool
         del nodes[thisMax]
 
-    return Article.objects.filter(id=foundNodes).distinct().all()
+    return Article.objects.filter(id__in=foundNodes).distinct().all()
 
 
 def search(titles, authors, keywords):

@@ -105,6 +105,10 @@
                 e.preventDefault();
                 $(this).remove();
             });
+            $("#selected-papers, #selected-authors").on("click", ".article, .author", function(e) {
+                e.preventDefault();
+                $(this).remove();
+            });
         });
     </script>
 {% endblock %}
@@ -129,9 +133,33 @@
         float: left;
         overflow-y: auto;
     }
+    h2 {
+        font-family: Josefin Sans;
+    }
+    #selected-papers:empty:before {
+        content: "No articles selected.";
+        color: grey;
+    }
+    #selected-authors:empty:before {
+        content: "No authors selected.";
+        color: grey;
+    }
+    #selected-keywords:empty:before {
+        content: "No keywords selected.";
+        color: grey;
+    }
     #selected-papers, #selected-authors, #selected-keywords {
         margin-bottom: 30px;
         font-size: 1.2em;
+        font-family: Work Sans;
+        font-weight: 300;
+    }
+    #selected-papers .article, #selected-authors .author {
+        cursor: pointer;
+        padding: 3px 5px;
+    }
+    #selected-papers .article:hover, #selected-authors .author:hover {
+        color: #EF5350;
     }
     #selected-keywords .keyword {
         display: inline-block;

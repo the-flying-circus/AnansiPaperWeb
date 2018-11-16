@@ -17,10 +17,12 @@ var COLORS = d3.schemeSet3;
 var nodeRadii = {};
 
 function main() {
-    var $sidedrawerTitle = $(".navdrawer .navdrawer-header h3");
-    var $sidedrawerAuthors = $(".navdrawer .navdrawer-authors");
-    var $sidedrawerUrl = $(".navdrawer .navdrawer-url");
-    var $sidedrawerAbstract = $(".navdrawer #collapseAbstract > .expansion-panel-body");
+    const $sidedrawerTitle = $(".navdrawer .navdrawer-header h3");
+    const $sidedrawerAuthors = $(".navdrawer .navdrawer-authors");
+    const $sidedrawerUrl = $(".navdrawer .navdrawer-url");
+    const $sidedrawerAbstract = $(".navdrawer #collapseAbstract > .expansion-panel-body");
+    const $sidedrawerInCitations = $(".navdrawer #collapseInCitations .list-group");
+    const $sidedrawerOutCitations = $(".navdrawer #collapseOutCitations .list-group");
 
     function zoomed() {
         g.attr("transform", d3.event.transform);
@@ -136,6 +138,19 @@ function main() {
             $sidedrawerUrl.text(data.url);
             $sidedrawerUrl.attr("href", data.url);
             $sidedrawerAbstract.text(data.abstract);
+            $sidedrawerInCitations.html();
+            for (var i = 0; i < data.inward.length; i++) {
+                const $citation = $(document.createElement("li"));
+                $citation.addClass("list-group-item");
+                $citation.text(data.inward[i].title);
+                $sidedrawerInCitations.append($citation);
+            }
+            for (var i = 0; i < data.outward.length; i++) {
+                const $citation = $(document.createElement("li"));
+                $citation.addClass("list-group-item");
+                $citation.text(data.outward[i].title);
+                $sidedrawerOutCitations.append($citation);
+            }
         });
     }
 

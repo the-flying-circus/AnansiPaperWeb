@@ -41,20 +41,19 @@
     </script>
 
     <script type="text/javascript">
-        var articles = [];
-        var authors = [];
-        var keywords = [];
-
-        function addArticle(id) {
-            articles.push(id);
+        function addArticle(id, title) {
+            $(".article[data-id='" + id + "']").remove();
+            $("#selected-papers").append($("<div class='article' />").text(title).attr("data-id", id));
         }
 
-        function addAuthor(id) {
-            authors.push(id);
+        function addAuthor(id, name) {
+            $(".author[data-id='" + id + "']").remove();
+            $("#selected-authors").append($("<div class='author' />").text(name).attr("data-id", id));
         }
 
         function addKeyword(id) {
-            keywords.push(id);
+            $(".keyword[data-id='" + id + "']").remove();
+            $("#selected-keywords").append($("<span class='keyword' />").text(id).attr("data-id", id));
         }
 
         $(document).ready(function() {
@@ -86,9 +85,9 @@
                 var val = $("#search")[0].selectize.getValue();
                 if (val !== "") {
                     $.get("/web/node?id=" + encodeURIComponent(val), function(data) {
-                        addArticle(data.id);
+                        addArticle(data.id, data.title);
                         data.authors.forEach(function(item) {
-                            addAuthor(item.id);
+                            addAuthor(item.id, item.name);
                         });
                         data.keywords.forEach(function(item) {
                             addKeyword(item);
@@ -101,6 +100,14 @@
                     }, 760);
                 }
                 $("#search")[0].selectize.clear();
+            });
+            $("#selected-keywords").on("click", ".keyword", function(e) {
+                e.preventDefault();
+                $(this).remove();
+            });
+            $("#selected-papers, #selected-authors").on("click", ".article, .author", function(e) {
+                e.preventDefault();
+                $(this).remove();
             });
         });
     </script>
@@ -122,7 +129,45 @@
         color: white;
         display: none;
         width: 50%;
+        height: 100vh;
         float: left;
+        overflow-y: auto;
+    }
+    #selected-papers:empty:before {
+        content: "No articles selected.";
+        color: grey;
+    }
+    #selected-authors:empty:before {
+        content: "No authors selected.";
+        color: grey;
+    }
+    #selected-keywords:empty:before {
+        content: "No keywords selected.";
+        color: grey;
+    }
+    #selected-papers, #selected-authors, #selected-keywords {
+        margin-bottom: 30px;
+        font-size: 1.2em;
+    }
+    #selected-papers .article, #selected-authors .author {
+        cursor: pointer;
+        padding: 3px 5px;
+    }
+    #selected-papers .article:hover, #selected-authors .author:hover {
+        color: #EF5350;
+    }
+    #selected-keywords .keyword {
+        display: inline-block;
+        padding: 3px 5px;
+        margin: 3px;
+        border: 1px solid white;
+        border-radius: 2px;
+        cursor: pointer;
+        user-select: none;
+    }
+    #selected-keywords .keyword:hover {
+        border-color: #EF5350;
+        color: #EF5350;
     }
     .selectize-control .selectize-input {
         background-color: transparent;
@@ -174,8 +219,15 @@
 
 <div id="list-container">
     <h2>Selected Papers</h2>
+    <div id="selected-papers"></div>
     <h2>Selected Authors</h2>
+    <div id="selected-authors"></div>
     <h2>Selected Keywords</h2>
+    <div id="selected-keywords"></div>
+
+    <form method="POST">
+        <button type="submit" class="btn btn-primary btn-lg">Weave</button>
+    </div>
 </div>
 
 <img id="eyes" src={% static "png/anansi.png"%} />

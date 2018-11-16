@@ -266,7 +266,7 @@
     <h2>Selected Keywords</h2>
     <div id="selected-keywords"></div>
 
-    <form id="weave" action="/web/generate_graph" method="POST">
+    <form id="weave" action="{% url "web" %}" method="POST">
         {% csrf_token %}
         <input type="hidden" id="id_articles" name="articles" />
         <input type="hidden" id="id_authors" name="authors" />

@@ -68,7 +68,15 @@ def graph(request):
 
 
 def generate_graph(request):
-    articles = [x for x in request.POST.get("articles").strip().split(',') if x]
-    authors = [x for x in request.POST.get("authors").strip().split(',') if x]
-    keywords = [x for x in request.POST.get("keywords").strip().split(',') if x]
-    nodes = getGraph(articles, authors, keywords)
+    articles = [x for x in request.POST.get("articles", "").strip().split(',') if x]
+    authors = [x for x in request.POST.get("authors", "").strip().split(',') if x]
+    keywords = [x for x in request.POST.get("keywords", "").strip().split(',') if x]
+    if articles or authors or keywords:
+        _, nodes = getGraph(articles, authors, keywords)
+        nodes = ",".join(str(x) for x in nodes.values_list("id", flat=True))
+    else:
+        nodes = ""
+
+    return render(request, "web.html", {
+        "nodes": nodes
+    })

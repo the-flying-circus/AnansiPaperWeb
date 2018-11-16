@@ -5,9 +5,8 @@ from . import views
 
 
 urlpatterns = [
-    path('', TemplateView.as_view(template_name="web.html")),
+    path('', views.generate_graph, name="web"),
     path('search', views.search),
     path('graph', views.graph),
     path('node', views.node),
-    path('generate_graph', views.generate_graph)
 ]

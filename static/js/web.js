@@ -13,7 +13,7 @@ $(document).ready(function() {
     });
 });
 
-COLORS = d3.schemeCategory10;
+var COLORS = d3.schemeSet3;
 
 function main() {
     var $sidedrawerTitle = $(".navdrawer .navdrawer-header h3");

@@ -1,10 +1,12 @@
 import requests
 
+from concurrent.futures import ThreadPoolExecutor, wait
 from django.core.management.base import BaseCommand, CommandError
 
 from web.models import Article, Author
 
 SEARCH_ENDPOINT = "https://www.semanticscholar.org/api/1/search"
+LIMIT = 10
 
 
 class Command(BaseCommand):
@@ -38,11 +40,11 @@ class Command(BaseCommand):
 
         if not obj.url:
             obj.url = url
-            obj.save()
+            obj.save(update_fields=["url"])
 
         if not obj.abstract:
             obj.abstract = abstract
-            obj.save()
+            obj.save(update_fields=["abstract"])
 
         # add authors
         authors = [x[0]['name'].strip() for x in result['authors']]
@@ -61,7 +63,7 @@ class Command(BaseCommand):
         self.stdout.write("Imported '{}'".format(title))
 
         if depth > 0:
-            resp = requests.get('https://www.semanticscholar.org/api/1/paper/{}?citedPapersLimit=100'.format(result['id']))
+            resp = requests.get('https://www.semanticscholar.org/api/1/paper/{}?citedPapersLimit={}'.format(result['id'], LIMIT))
             resp.raise_for_status()
 
             for paper in resp.json()['citedPapers']['citations']:
@@ -81,7 +83,7 @@ class Command(BaseCommand):
             "coAuthors": [],
             "facets": {},
             "page": 1,
-            "pageSize": 100,
+            "pageSize": LIMIT,
             "publicationTypes": [],
             "requireViewablePdf": False,
             "sort": "relevance",
@@ -90,7 +92,7 @@ class Command(BaseCommand):
         })
         resp.raise_for_status()
 
-        for result in resp.json()["results"]:
-            self.add_paper(result, depth=1)
+        with ThreadPoolExecutor(max_workers=4) as executor:
+            wait([executor.submit(self.add_paper, result, depth=3) for result in resp.json()["results"]])
 
         self.stdout.write(self.style.SUCCESS('Import completed!'))

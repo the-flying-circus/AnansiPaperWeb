@@ -3,7 +3,7 @@ from django.http import JsonResponse
 from django.db.models import Q
 from django.core.cache import cache
 
-from web.search import getGraph
+from web.search import getGraph, getGraphAlt
 from .models import Article, Author
 
 
@@ -93,7 +93,7 @@ def generate_graph(request):
     authors = [x for x in request.POST.get("authors", "").strip().split(',') if x]
     keywords = [x for x in request.POST.get("keywords", "").strip().split(',') if x]
     if articles or authors or keywords:
-        _, nodes = getGraph(articles, authors, keywords)
+        _, nodes = getGraphAlt(articles, authors, keywords)
         nodes = ",".join(str(x) for x in nodes)
     else:
         nodes = request.GET.get("nodes", "")

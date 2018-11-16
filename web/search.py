@@ -201,3 +201,13 @@ def getGraph(titles, authors, keywords):
     out = (list(centrals.values_list("id", flat=True)), list(allNodes.values_list("id", flat=True)))
     cache.set(key, out, None)
     return out
+
+
+def getGraphAlt(titles, authors, keywords):
+    a = Article.objects.filter(id__in=titles)
+    a |= Article.objects.filter(cites__in=a)
+    a |= Article.objects.filter(cited__in=a)
+    a |= Article.objects.filter(cites__in=a)
+    a |= Article.objects.filter(cited__in=a)
+    out = list(set(a.distinct().values_list("id", flat=True)))
+    return out, out

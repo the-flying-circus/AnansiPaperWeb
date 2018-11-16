@@ -4,18 +4,25 @@
 {% block js %}
     {{ block.super }}
     <!-- particles.js container -->
-    <div id="particles-js"></div>
-    <!-- stats - count particles -->
-    <div class="count-particles">
-    	<span class="js-count-particles">--</span> particles
-    </div>
+    <div id="particles-js" style="z-index: -1"></div>
     <!-- particles.js lib -->
     <script type="text/javascript" src="{% static "js/particles.min.js" %}"></script>
     <!-- stats.js lib -->
     <script type="text/javascript" src="{% static "js/particles.config.js" %}"></script>
 {% endblock %}
 
+
 {% block css %}
     {{ block.super }}
     <link rel="stylesheet" href="{% static "css/index.css"%}" />
+{% endblock %}
+
+{% block content %}
+<!-- landing text -->
+
+<div class="jumbotron vertical-center">
+	<div style="margin:auto">
+		<h1 id="landing-text" class="display-2" style="color:black; text-align: center">Anansi Paper Web</h1>
+	</div>
+</div>
 {% endblock %}

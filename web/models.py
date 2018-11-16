@@ -36,3 +36,6 @@ class KeywordRank(models.Model):
     article = models.ForeignKey(Article, on_delete=models.CASCADE)
     keyword = models.ForeignKey(Keyword, on_delete=models.CASCADE)
     rank = models.FloatField()
+
+    def __str__(self):
+        return str(self.keyword) + ' in ' + str(self.article) + ' (' + str(self.rank) + ')'

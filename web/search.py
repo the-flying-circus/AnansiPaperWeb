@@ -1,5 +1,5 @@
 from .models import Article, Keyword
-from django.db.models import Count, Case, When
+from django.db.models import Count, Case, When, Value, IntegerField
 from django.core.cache import cache
 
 CENTRAL_AUTHOR_TO_TITLE_THRESH = 0.3
@@ -36,22 +36,23 @@ def findCentral(titles, authors, keywords):
         if titles:
             # if there's titles, get the relevant keywords
             keywordsTitleObjs = Keyword.objects.filter(articles__in=centrals).distinct()
-            # print('found keywords from title-papers: ')
-            # print(keywords)
+            print('found keywords from title-papers: ')
+            print(keywordsTitleObjs)
 
             # get the papers from the authors with enough keywords
             if keywordsTitleObjs.count() != 0:
                 found = authorPapers.annotate(match_count=Count(Case(When(keywords__in=keywordsTitleObjs, then=1), default=0))).filter(match_count__gte=CENTRAL_AUTHOR_TO_TITLE_THRESH)
-                # print('found relevant papers from authors')
-                # print(found)
-
-                centrals = centrals | found
+                print('found relevant papers from authors')
+                print(found)
+                print(centrals)
+                centrals = centrals.union(found)
+                print(centrals)
 
         if keywords:
             # choose articles from the author that also nicely correspond with keywords
             keywordObjs = Keyword.objects.filter(keyword__in=keywords).distinct()
             found = authorPapers.annotate(match_count=Count(Case(When(keywords__in=keywordObjs, then=1)))).filter(match_count__gte=CENTRAL_AUTHOR_TO_KEYWORD_THRESH)
-            centrals = centrals | found
+            centrals = centrals.union(found)
 
     if keywords and not titles and not authors:
         # if keywords are all we have to go off of
@@ -85,7 +86,7 @@ def traverse(centralNodes, keywords):
 
     # populate the dict
     nodes = {}
-    firstLayer = (Article.objects.filter(cited__in=centralNodes) | Article.objects.filter(cites__in=centralNodes)).distinct()
+    firstLayer = (Article.objects.filter(cited__in=centralNodes).union(Article.objects.filter(cites__in=centralNodes))).distinct()
     maxVal = 0  # max val ever seen
     for node in firstLayer:
         nodes[node.id] = (calcScore(node, foundNodes, keywords), 1)
@@ -194,7 +195,7 @@ def getGraph(titles, authors, keywords):
     centrals = findCentral(titles, authors, keywords)
     centralKeys = Keyword.objects.filter(articles__in=centrals)
     searchKeys = Keyword.objects.filter(keyword__in=keywords)
-    keywords = (centralKeys | searchKeys).distinct()
+    keywords = (centralKeys.union(searchKeys)).distinct()
     allNodes = traverse(centrals, keywords)
 
     out = (list(centrals.values_list("id", flat=True)), list(allNodes.values_list("id", flat=True)))

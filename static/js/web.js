@@ -19,10 +19,11 @@ links = [
 ]
 
 $(document).ready(function() {
-    const width = window.innerWidth;
-    const height = window.innerHeight;
+    const $container = $("#web-container");
+    const width = $container.width();
+    const height = $container.height();
 
-    const svg = d3.select("svg")
+    const svg = d3.select("#web-container")
         .attr("width", width)
         .attr("height", height);
 
@@ -111,10 +112,15 @@ $(document).ready(function() {
     selectNode(nodes[0]);
     nodeElements.on("click", selectNode);
     $(window).resize(function() {
-        const width = window.innerWidth;
-        const height = window.innerHeight;
+        const width = $container.width();
+        const height = $container.height();
         svg.attr("width", width).attr("height", height);
         simulation.force("center", d3.forceCenter(width / 2, height / 2));
-        console.log("lol");
     });
+
+    function zoomed() {
+        svg.attr("transform", "translate(" + d3.event.transform.x + "," + d3.event.transform.y + ")scale(" + d3.event.transform.k + ")");
+    }
+
+    svg.call(d3.zoom().on("zoom", zoomed));
 });

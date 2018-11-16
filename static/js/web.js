@@ -29,22 +29,21 @@ function main() {
     const svg = d3.select("#web-container")
         .attr("width", width)
         .attr("height", height)
-        .call(zoom.scaleExtent([1, 8]).on("zoom", zoomed));
+        .call(zoom.scaleExtent([0.5, 8]).on("zoom", zoomed));
     svg.append('svg:defs').append('svg:marker')
         .attr('id', 'end-arrow')
         .attr('viewBox', '0 -5 10 10')
-        .attr('refX', 34)
-        .attr('markerWidth', 4)
-        .attr('markerHeight', 4)
+        .attr('refX', 22)
+        .attr('markerWidth', 8)
+        .attr('markerHeight', 8)
         .attr('orient', 'auto')
         .append('svg:path')
-        .attr('d', 'M0,-5L10,0L0,5')
-        .attr('fill', '#000');
+        .attr('d', 'M0,-5L10,0L0,5');
 
     const g = svg.append("g");
 
     const simulation = d3.forceSimulation()
-        .force("charge", d3.forceManyBody().strength(-100))
+        .force("charge", d3.forceManyBody().strength(-70))
         .force("center", d3.forceCenter(width / 2, height / 2));
 
     const linkElements = g.selectAll("line")
@@ -68,8 +67,8 @@ function main() {
         .enter().append("text")
             .text(node => node.label)
             .attr("font-size", 14)
-            .attr("dx", 15)
-            .attr("dy", 4);
+            .attr("dx", 14)
+            .attr("dy", 5);
 
     function isNeighborLink(node, link) {
         return link.target.id === node.id || link.source.id === node.id;
@@ -100,13 +99,15 @@ function main() {
     function transitionFocus() {
         return d3.zoomIdentity
             .translate(width / 2, height / 2)
-            .scale(4)
+            .scale(3)
             .translate(-selectedNode.x, -selectedNode.y);
     }
 
     function selectNode(node) {
         selectedNode = node;
         const neighbors = getNeighbors(selectedNode);
+        textElements.attr("fill", node => getTextColor(node, neighbors));
+        linkElements.attr("stroke", link => getLinkColor(selectedNode, link));
         svg.transition().duration(500).call(zoom.transform, transitionFocus);
     }
 
@@ -132,7 +133,7 @@ function main() {
 
     simulation.force("link", d3.forceLink()
         .id(link => link.id)
-        .strength(link => 0.1));
+        .strength(link => 0.05));
     simulation.force("link").links(links);
 
     nodeElements.on("click", selectNode);

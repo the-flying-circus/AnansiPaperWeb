@@ -76,6 +76,7 @@ canvas{
     max-width: 600px;
     margin: 0 auto;
     margin-bottom: 6vh;
+    font-weight: 200;
 }
 
 #directions h2 {

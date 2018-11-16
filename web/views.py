@@ -31,7 +31,7 @@ def node(request):
 def search(request):
     query = request.GET.get("q")
     return JsonResponse({
-        "articles": list(Article.objects.filter(title__icontains=query).values("id", "title"))
+        "articles": list({"id": art.id, "title": art.title, "year": art.year, "authors": art.author_string} for art in Article.objects.filter(title__icontains=query).prefetch_related("authors"))
     })
 
 
@@ -46,7 +46,7 @@ def graph(request):
             "label": node.label,
             "title": node.title,
             "isQuery": True,
-            "authors": ", ".join([author.full_name for author in node.authors.all()]),
+            "authors": node.author_string,
             "group": node.group
         })
 

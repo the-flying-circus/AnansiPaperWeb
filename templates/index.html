@@ -133,6 +133,8 @@
                 $("#id_keywords").val($("#selected-keywords .keyword").map(function() {
                     return $(this).text();
                 }).get().join(","));
+
+                $(this).find("button").prop("disabled", true);
             });
         });
     </script>

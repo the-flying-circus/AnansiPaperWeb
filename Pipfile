@@ -9,6 +9,7 @@ dj-database-url = "*"
 "bs4" = "*"
 "requests" = "*"
 django-extensions = "*"
+rake-nltk = "*"
 
 [dev-packages]
 

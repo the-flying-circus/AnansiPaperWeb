@@ -13,6 +13,8 @@ $(document).ready(function() {
     });
 });
 
+COLORS = d3.schemeCategory10;
+
 function main() {
     function zoomed() {
         g.attr("transform", d3.event.transform);
@@ -74,10 +76,7 @@ function main() {
     }
 
     function getNodeColor(node, neighbors) {
-        if (node.group === 0)
-            return neighbors.includes(node.id) ? "black" : "grey";
-        if (node.group === 1)
-            return neighbors.includes(node.id) ? "red" : "pink";
+        return COLORS[node.group % COLORS.length];
     }
 
     function getTextColor(node, neighbors) {
@@ -108,12 +107,14 @@ function main() {
     function selectNode(node) {
         selectedNode = node;
         const neighbors = getNeighbors(selectedNode);
-        nodeElements.attr("fill", node => getNodeColor(node, neighbors));
-        textElements.attr("fill", node => getTextColor(node, neighbors));
-        linkElements.attr("stroke", link => getLinkColor(selectedNode, link));
-
         svg.transition().duration(500).call(zoom.transform, transitionFocus);
     }
+
+    selectedNode = nodes[0];
+    const neighbors = getNeighbors(selectedNode);
+    nodeElements.attr("fill", node => getNodeColor(node, neighbors));
+    textElements.attr("fill", node => getTextColor(node, neighbors));
+    linkElements.attr("stroke", link => getLinkColor(selectedNode, link));
 
     simulation.nodes(nodes).on("tick", () => {
         linkElements
@@ -134,7 +135,6 @@ function main() {
         .strength(link => 0.1));
     simulation.force("link").links(links);
 
-    selectNode(nodes[0]);
     nodeElements.on("click", selectNode);
     nodeElements.on("mouseover", function() {
         $(this).popover("show");

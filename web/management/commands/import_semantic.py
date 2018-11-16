@@ -3,6 +3,8 @@ import threading
 
 from concurrent.futures import ThreadPoolExecutor, wait
 from django.core.management.base import BaseCommand, CommandError
+from django.core.management import call_command
+from django.core.cache import cache
 
 from web.models import Article, Author, Journal
 
@@ -153,3 +155,7 @@ class Command(BaseCommand):
 
         self.stdout.write(self.style.SUCCESS('Import completed!'))
         self.stdout.write("{} imported, {} missing link, {} missing abstract.".format(self.total, self.missing_link, self.missing_abstract))
+
+        call_command("remove_duplicates")
+
+        cache.clear()

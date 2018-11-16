@@ -101,6 +101,10 @@
                 }
                 $("#search")[0].selectize.clear();
             });
+            $("#selected-keywords").on("click", ".keyword", function(e) {
+                e.preventDefault();
+                $(this).remove();
+            });
         });
     </script>
 {% endblock %}
@@ -135,6 +139,12 @@
         margin: 3px;
         border: 1px solid white;
         border-radius: 2px;
+        cursor: pointer;
+        user-select: none;
+    }
+    #selected-keywords .keyword:hover {
+        border-color: #EF5350;
+        color: #EF5350;
     }
     .selectize-control .selectize-input {
         background-color: transparent;

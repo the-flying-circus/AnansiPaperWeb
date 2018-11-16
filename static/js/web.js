@@ -14,6 +14,7 @@ $(document).ready(function() {
 });
 
 var COLORS = d3.schemeSet3;
+var nodeRadii = {};
 
 function main() {
     var $sidedrawerTitle = $(".navdrawer .navdrawer-header h3");
@@ -38,7 +39,7 @@ function main() {
     svg.append('svg:defs').append('svg:marker')
         .attr('id', 'end-arrow')
         .attr('viewBox', '0 -5 10 10')
-        .attr('refX', 22)
+        .attr('refX', 7)
         .attr('markerWidth', 8)
         .attr('markerHeight', 8)
         .attr('orient', 'auto')
@@ -61,7 +62,7 @@ function main() {
     const nodeElements = g.selectAll("circle")
         .data(nodes)
         .enter().append("circle")
-            .attr("r", 10)
+            .attr("r", (node) => calcNodeRadius(node))
             .attr("fill", "grey")
             .attr("data-toggle", "popover")
             .attr("data-title", (node) => node.title)
@@ -72,7 +73,7 @@ function main() {
         .enter().append("text")
             .text(node => node.label)
             .attr("font-size", 14)
-            .attr("dx", 14)
+            .attr("dx", (node) => getLabelOffset(node))
             .attr("dy", 5);
 
     function isNeighborLink(node, link) {
@@ -85,6 +86,15 @@ function main() {
 
     function getTextColor(node, neighbors) {
         return neighbors.includes(node.id) ? "black" : "grey";
+    }
+
+    function calcNodeRadius(node) {
+        nodeRadii[node.id] = 5 + Math.log(node.indegree + Math.E) * 8;
+        return nodeRadii[node.id];
+    }
+
+    function getLabelOffset(node) {
+        return 5 + nodeRadii[node.id];
     }
 
     function getLinkColor(node, link) {
@@ -139,8 +149,22 @@ function main() {
         linkElements
             .attr("x1", link => link.source.x)
             .attr("y1", link => link.source.y)
-            .attr("x2", link => link.target.x)
-            .attr("y2", link => link.target.y);
+            .attr("x2", link => {
+                const targetPadding = 2 + nodeRadii[link.target.id];
+                const deltaX = link.target.x - link.source.x;
+                const deltaY = link.target.y - link.source.y;
+                const dist = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+                const normX = deltaX / dist;
+                return link.target.x - (targetPadding * normX);
+            })
+            .attr("y2", link => {
+                const targetPadding = 2 + nodeRadii[link.target.id];
+                const deltaX = link.target.x - link.source.x;
+                const deltaY = link.target.y - link.source.y;
+                const dist = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+                const normY = deltaY / dist;
+                return link.target.y - (targetPadding * normY);
+            });
         nodeElements
             .attr("cx", node => node.x)
             .attr("cy", node => node.y);

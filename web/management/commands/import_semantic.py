@@ -4,7 +4,7 @@ import threading
 from concurrent.futures import ThreadPoolExecutor, wait
 from django.core.management.base import BaseCommand, CommandError
 
-from web.models import Article, Author
+from web.models import Article, Author, Journal
 
 SEARCH_ENDPOINT = "https://www.semanticscholar.org/api/1/search"
 LIMIT = 100
@@ -25,14 +25,21 @@ class Command(BaseCommand):
             raw_resp = resp.json()
             result = raw_resp['paper']
 
+            # get title
             title = result['title']['text'].strip()
+
+            # get abstract
             if 'paperAbstract' in result:
                 abstract = result['paperAbstract']['text'].strip()
             else:
                 abstract = None
+
+            # get url
             url = result.get('presentationUrl')
             if not url and 'links' in result:
                 url = result['links'][0]['url']
+
+            # get year
             year = result.get('year')
             if year is not None:
                 if not isinstance(year, int):
@@ -42,11 +49,25 @@ class Command(BaseCommand):
                 else:
                     year = None
 
-            obj, _ = Article.objects.get_or_create(title__iexact=title, year__in=[year, None], defaults={
+            # get doi
+            if 'doiInfo' in result:
+                doi = result['doiInfo']['doi']
+            else:
+                doi = None
+
+            # get journal
+            if 'journal' in result:
+                journal, _ = Journal.objects.get_or_create(name=result['journal']['name'])
+            else:
+                journal = None
+
+            obj, _ = Article.objects.get_or_create(title__iexact=title, year__in=[year, None], doi__in=[doi, None], defaults={
                 'title': title,
                 'abstract': abstract,
                 'url': url,
-                'year': year
+                'year': year,
+                'doi': doi,
+                'journal': journal
             })
 
             if not url:
@@ -55,13 +76,21 @@ class Command(BaseCommand):
             if not abstract:
                 self.missing_abstract += 1
 
-            if not obj.url:
+            if not obj.doi and doi:
+                obj.doi = doi
+                obj.save(update_fields=["doi"])
+
+            if not obj.url and url:
                 obj.url = url
                 obj.save(update_fields=["url"])
 
-            if not obj.abstract:
+            if not obj.abstract and abstract:
                 obj.abstract = abstract
                 obj.save(update_fields=["abstract"])
+
+            if not obj.journal and journal:
+                obj.journal = journal
+                obj.save(update_fields=["journal"])
 
             # add authors
             authors = [x[0]['name'].strip() for x in result['authors']]

@@ -3,6 +3,9 @@
 
 {% block js %}
     {{ block.super }}
+    <script type="text/javascript">
+    	var landing_state = true;
+    </script>
     <!-- particles.js container -->
     <div id="particles-js" style="z-index: -1"></div>
     <!-- particles.js lib -->
@@ -13,35 +16,51 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/js/standalone/selectize.min.js" integrity="sha256-+C0A5Ilqmu4QcSPxrlGpaZxJ04VjsRjKu+G82kl5UJk=" crossorigin="anonymous"></script>
 
     <script type="text/javascript">
-    $(document).ready(function() {
-        $("#search").selectize({
-            valueField: 'id',
-            labelField: 'title',
-            searchField: 'title',
-            maxItems: 1,
-            create: false,
-            render: {
-                option: function(item, escape) {
-                    return '<div class="article"><span class="title">' + escape(item.title) + '</span></div>';
-                }
-            },
-            load: function(query, callback) {
-                if (!query.length) return callback();
-                $.ajax({
-                    url: "/web/search?q=" + encodeURIComponent(query),
-                    type: "GET",
-                    error: function() {
-                        callback();
-                    },
-                    success: function(res) {
-                        callback(res.articles);
-                    }
-                });
-            }
-        }).on("change", function() {
-            $("#search").closest("form").submit();
-        });
-    });
+    	function transition(){
+    		search_cont = document.getElementById("search-container");
+    		search_cont.style["background-color"] = "white";
+    		search_cont.style["margin-top"] = "0px";
+    		search_cont.style["margin-bottom"] = "0px";
+    		search_cont.style["min-height"] = "100vh";
+    		search_cont.style.height = "100%";
+    		search_cont.style.top = "0";
+    		search_cont.style.bottom = "0";
+
+    		document.getElementById("landing-text").style.color = "black";
+
+    	}
+    </script>
+
+    <script type="text/javascript">
+	    $(document).ready(function() {
+	        $("#search").selectize({
+	            valueField: 'id',
+	            labelField: 'title',
+	            searchField: 'title',
+	            maxItems: 1,
+	            create: false,
+	            render: {
+	                option: function(item, escape) {
+	                    return '<div class="article"><span class="title">' + escape(item.title) + '</span></div>';
+	                }
+	            },
+	            load: function(query, callback) {
+	                if (!query.length) return callback();
+	                $.ajax({
+	                    url: "/web/search?q=" + encodeURIComponent(query),
+	                    type: "GET",
+	                    error: function() {
+	                        callback();
+	                    },
+	                    success: function(res) {
+	                        callback(res.articles);
+	                    }
+	                });
+	            }
+	        }).on("change", function() {
+	            $("#search").closest("form").submit();
+	        });
+	    });
     </script>
 {% endblock %}
 
@@ -61,10 +80,10 @@
 {% block content %}
 <!-- landing text -->
 
-<div class="jumbotron vertical-center">
+<div id="search-container" class="jumbotron vertical-center">
     <div style="margin:auto">
         <h1 id="landing-text" class="display-2">Anansi Paper Web</h1>
-        <form action="/web/node" method="GET">
+        <form action="/web/node" onclick="transition()" method="GET">
             <input id="search" name="id" type="search" class="form-control form-control-lg" placeholder="Search Anansi" />
         </form>
     </div>

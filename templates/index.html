@@ -44,14 +44,14 @@
                 labelField: 'title',
                 searchField: ['title', 'authors', 'doi'],
                 maxItems: 1,
+                preload: true,
                 create: false,
                 render: {
                     option: function(item, escape) {
-                        return '<div class="article"><span class="title">' + escape(item.title) + '</span><span class="year">' + escape(item.year) + '</span> <span class="authors">' + escape(item.authors) + '</span></div>';
+                        return '<div class="article"><span class="title">' + escape(item.title) + '</span><span class="year">' + (item.year ? escape(item.year) : '') + '</span> <span class="authors">' + escape(item.authors) + '</span></div>';
                     }
                 },
                 load: function(query, callback) {
-                    if (!query.length) return callback();
                     $.ajax({
                         url: "/web/search?q=" + encodeURIComponent(query),
                         type: "GET",

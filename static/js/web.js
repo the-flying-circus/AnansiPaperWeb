@@ -16,6 +16,11 @@ $(document).ready(function() {
 COLORS = d3.schemeCategory10;
 
 function main() {
+    var $sidedrawerTitle = $(".navdrawer .navdrawer-header h3");
+    var $sidedrawerAuthors = $(".navdrawer .navdrawer-authors");
+    var $sidedrawerUrl = $(".navdrawer .navdrawer-url");
+    var $sidedrawerAbstract = $(".navdrawer #collapseAbstract > .expansion-panel-body");
+
     function zoomed() {
         g.attr("transform", d3.event.transform);
     }
@@ -109,6 +114,19 @@ function main() {
         textElements.attr("fill", node => getTextColor(node, neighbors));
         linkElements.attr("stroke", link => getLinkColor(selectedNode, link));
         svg.transition().duration(500).call(zoom.transform, transitionFocus);
+
+        $.get("/web/node?id=" + selectedNode.id, function(data) {
+            $sidedrawerTitle.text(data.title);
+            var authors = "";
+            for (var i = 0; i < data.authors.length; i++) {
+                authors += data.authors[i].name + ", ";
+            }
+            authors = authors.substring(0, authors.length - 2);
+            $sidedrawerAuthors.text(authors);
+            $sidedrawerUrl.text(data.url);
+            $sidedrawerUrl.attr("href", data.url);
+            $sidedrawerAbstract.text(data.abstract);
+        });
     }
 
     selectedNode = nodes[0];

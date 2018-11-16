@@ -20,14 +20,26 @@
         <div id="navdrawer" class="navdrawer navdrawer-permanent">
             <div class="navdrawer-content">
                 <div class="navdrawer-header">
-                    The Nav
+                    <h3>Select a Node</h3>
+                    <div class="navdrawer-authors"></div>
+                    <div><a target="_blank" class="navdrawer-url"></a></div>
                 </div>
                 <div class="navdrawer-nav">
-                    <ul>
-                        <li>Yo</li>
-                        <li>Yo</li>
-                        <li>Yo</li>
-                    </ul>
+                    <div class="list-group">
+                        <div id="accordion" class="expansion-panel list-group-item">
+                            <a class="expansion-panel-toggler collapsed" data-toggle="collapse" href="#collapseAbstract">
+                                Abstract
+                                <div class="expansion-panel-icon ml-3 text-black-secondary">
+                                    <i class="collapsed-show material-icons">keyboard_arrow_down</i>
+                                    <i class="collapsed-hide material-icons">keyboard_arrow_up</i>
+                                </div>
+                            </a>
+                            <div id="collapseAbstract" class="collapse" data-parent="#accordion">
+                                <div class="expansion-panel-body">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

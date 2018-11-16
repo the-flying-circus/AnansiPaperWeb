@@ -10,3 +10,12 @@
     width: 100%;
     height: 100%;
 }
+
+a {
+    word-break: break-all;
+}
+
+.navdrawer-permanent {
+    min-width: 25rem;
+    width: 20%;
+}

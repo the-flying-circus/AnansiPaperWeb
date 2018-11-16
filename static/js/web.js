@@ -32,7 +32,7 @@ $(document).ready(function() {
     const svg = d3.select("#web-container")
         .attr("width", width)
         .attr("height", height)
-        .call(zoom.scaleExtent([1, 10]).on("zoom", zoomed));
+        .call(zoom.scaleExtent([1, 8]).on("zoom", zoomed));
 
     const g = svg.append("g");
 
@@ -103,7 +103,7 @@ $(document).ready(function() {
         textElements.attr("fill", node => getTextColor(node, neighbors));
         linkElements.attr("stroke", link => getLinkColor(selectedNode, link));
 
-        g.transition().duration(500).call(zoom.transform, transitionFocus);
+        svg.transition().duration(500).call(zoom.transform, transitionFocus);
     }
 
     simulation.nodes(nodes).on("tick", () => {

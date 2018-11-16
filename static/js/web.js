@@ -41,6 +41,7 @@ function main() {
     svg.append('svg:defs').append('svg:marker')
         .attr('id', 'end-arrow')
         .attr('viewBox', '0 -5 10 10')
+        .attr('fill', 'white')
         .attr('refX', 7)
         .attr('markerWidth', 8)
         .attr('markerHeight', 8)
@@ -58,7 +59,7 @@ function main() {
         .data(links)
         .enter().append("line")
         .attr("stroke-width", 1)
-        .attr("stroke", "black")
+        .attr("stroke", "white")
         .attr("marker-end", "url(#end-arrow)");
 
     const nodeElements = g.selectAll("circle")
@@ -87,7 +88,7 @@ function main() {
     }
 
     function getTextColor(node, neighbors) {
-        return neighbors.includes(node.id) ? "black" : "grey";
+        return neighbors.includes(node.id) ? "white" : "#ddd";
     }
 
     function calcNodeRadius(node) {
@@ -100,7 +101,7 @@ function main() {
     }
 
     function getLinkColor(node, link) {
-        return isNeighborLink(node, link) ? "black" : "grey";
+        return isNeighborLink(node, link) ? "white" : "#ccc";
     }
 
     function getNeighbors(node) {
@@ -138,13 +139,14 @@ function main() {
             $sidedrawerUrl.text(data.url);
             $sidedrawerUrl.attr("href", data.url);
             $sidedrawerAbstract.text(data.abstract);
-            $sidedrawerInCitations.html();
+            $sidedrawerInCitations.empty();
             for (var i = 0; i < data.inward.length; i++) {
                 const $citation = $(document.createElement("li"));
                 $citation.addClass("list-group-item");
                 $citation.text(data.inward[i].title);
                 $sidedrawerInCitations.append($citation);
             }
+            $sidedrawerOutCitations.empty();
             for (var i = 0; i < data.outward.length; i++) {
                 const $citation = $(document.createElement("li"));
                 $citation.addClass("list-group-item");

@@ -4,19 +4,40 @@
     top: 0;
     width: 100%;
     height: 100%;
+    background-color: black;
 }
 
 #web-container {
     width: 100%;
     height: 100%;
-    background-color: #fcfcfc;
 }
 
 a {
     word-break: break-all;
 }
 
-.navdrawer-permanent {
+.navdrawer {
     min-width: 25rem;
     width: 20%;
+    color: white;
+    background-color: #222;
+}
+
+.navdrawer-content, .navdrawer-header, .navdrawer .list-group-item, .navdrawer .expansion-panel-icon {
+    color: white !important;
+    background-color: #222;
+}
+
+.navdrawer-header, .navdrawer-header h3 {
+    margin: 0;
+    border-color: #ccc;
+}
+
+.navdrawer .list-group-item {
+    border-color: #444;
+}
+
+.navdrawer .expansion-panel-toggler:hover, .navdrawer .expansion-panel-toggler:focus {
+    color: white;
+    background-color: #222;
 }

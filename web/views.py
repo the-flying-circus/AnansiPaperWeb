@@ -36,7 +36,7 @@ def search(request):
 
 
 def graph(request):
-    nodes = Article.objects.all()[:20]
+    nodes = Article.objects.all()[:100]
 
     node_list = []
     edge_list = []

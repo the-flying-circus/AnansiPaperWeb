@@ -36,7 +36,7 @@ def search(request):
 
 
 def graph(request):
-    nodes = Article.objects.all()[:10]
+    nodes = Article.objects.all()[:20]
 
     node_list = []
     edge_list = []
@@ -48,7 +48,8 @@ def graph(request):
             "isQuery": True,
             "authors": ", ".join([author.full_name for author in node.authors.all()])
         })
-        for other in node.cites.all():
+
+        for other in node.cites.filter(id__in=nodes.values_list("id", flat=True)):
             edge_list.append({
                 "source": node.id,
                 "target": other.id

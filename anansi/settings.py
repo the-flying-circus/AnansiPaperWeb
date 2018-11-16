@@ -13,7 +13,7 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 import os
 try:
     from secrets import secrets
-except ImportError:
+except (ImportError, ValueError):
     secrets = {
         'DJANGO_SECRET_KEY': 'x8=w)beft#8b#&!iy@pl$16oy@mlx3z0_#1e#&d9mo9)%x6do7'
     }

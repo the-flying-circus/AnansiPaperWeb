@@ -55,6 +55,10 @@ class Article(models.Model):
         else:
             return 0
 
+    @property
+    def author_string(self):
+        return ", ".join([ath.full_name for ath in self.authors.all()])
+
     def __str__(self):
         return self.title
 

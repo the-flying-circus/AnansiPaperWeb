@@ -36,12 +36,12 @@
 	        $("#search").selectize({
 	            valueField: 'id',
 	            labelField: 'title',
-	            searchField: 'title',
+	            searchField: ['title', 'authors'],
 	            maxItems: 1,
 	            create: false,
 	            render: {
 	                option: function(item, escape) {
-	                    return '<div class="article"><span class="title">' + escape(item.title) + '</span></div>';
+                        return '<div class="article"><span class="title">' + escape(item.title) + '</span><span class="year">' + escape(item.year) + '</span> <span class="authors">' + escape(item.authors) + '</span></div>';
 	                }
 	            },
 	            load: function(query, callback) {
@@ -81,6 +81,16 @@
     }
     .article {
         padding: 5px;
+    }
+    .authors {
+        color: grey;
+    }
+    .year {
+        color: #ccc;
+        float: right;
+    }
+    .selectize-control .selectize-dropdown:hover {
+        border-color: #d0d0d0;
     }
     </style>
 {% endblock %}

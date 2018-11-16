@@ -1,25 +1,19 @@
-//$.get("/web/search?q=Neurobiology", function(data) {
-//    nodes = data.nodes;
-//    links = data.links;
-//});
+var nodes;
+var links;
 
-nodes = [
-    {id: "node1", authors: "Bill Lee, Bob Ert", title: "How Things Stuff", isCool: true},
-    {id: "node2", authors: "Sal Lee, Frank Yi", title: "How Stuff Things", isCool: false},
-    {id: "node3", authors: "Grey Son", title: "How Things Stuff", isCool: false},
-    {id: "node4", authors: "Sue San, Char Lee", title: "How Things Stuff", isCool: true},
-]
-
-links = [
-    {target: "node1", source: "node2", strength: 0.1},
-    {target: "node2", source: "node3", strength: 0.1},
-]
+$.get("/web/graph", function(data) {
+    nodes = data.nodes;
+    links = data.edges;
+    main();
+});
 
 $(document).ready(function() {
     $("#navdrawer").navdrawer({
         type: "permanent"
     });
+});
 
+function main() {
     function zoomed() {
         g.attr("transform", d3.event.transform);
     }
@@ -70,7 +64,7 @@ $(document).ready(function() {
     const textElements = g.selectAll("text")
         .data(nodes)
         .enter().append("text")
-            .text(node => node.authors)
+            .text(node => node.label)
             .attr("font-size", 14)
             .attr("dx", 15)
             .attr("dy", 4);
@@ -137,7 +131,7 @@ $(document).ready(function() {
 
     simulation.force("link", d3.forceLink()
         .id(link => link.id)
-        .strength(link => link.strength));
+        .strength(link => 0.1));
     simulation.force("link").links(links);
 
     selectNode(nodes[0]);
@@ -154,4 +148,4 @@ $(document).ready(function() {
         svg.attr("width", width).attr("height", height);
         //simulation.force("center", d3.forceCenter(width / 2, height / 2));
     });
-});
+}

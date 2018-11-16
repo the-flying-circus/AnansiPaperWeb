@@ -22,6 +22,7 @@ def node(request):
         "title": article.title,
         "abstract": article.abstract,
         "authors": [{"name": "{} {}".format(author.first_name, author.last_name).strip(), "id": author.id} for author in article.authors.order_by("last_name")],
+        "keywords": list(article.keywords.order_by("-keywordrank__rank").values_list("keyword", flat=True)),
         "url": article.url,
         "outward": list(article.cites.values("id", "title")),
         "inward": list(article.cited.values("id", "title"))
@@ -30,8 +31,9 @@ def node(request):
 
 def search(request):
     query = request.GET.get("q")
+    articles = Article.objects.filter(Q(title__icontains=query) | Q(authors__first_name__icontains=query) | Q(authors__last_name__icontains=query) | Q(doi__icontains=query)).order_by("-year")[:100]
     return JsonResponse({
-        "articles": list({"id": art.id, "title": art.title, "year": art.year, "authors": art.author_string} for art in Article.objects.filter(Q(title__icontains=query) | Q(authors__first_name__icontains=query) | Q(authors__last_name__icontains=query) | Q(doi__icontains=query)).order_by("-year")[:100].prefetch_related("authors"))
+        "articles": list({"id": art.id, "title": art.title, "year": art.year, "authors": art.author_string, "doi": art.doi} for art in articles.prefetch_related("authors"))
     })
 
 

@@ -219,7 +219,7 @@ function main() {
 
     nodeElements.on("click", selectNode);
     nodeElements.on("mouseover", function() {
-        $(this).popover("show");
+        $(this).popover("toggle");
     });
     nodeElements.on("mouseout", function() {
         $(this).popover("hide");

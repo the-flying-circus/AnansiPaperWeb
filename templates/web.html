@@ -8,6 +8,8 @@
 
 {% block js %}
     {{ block.super }}
+    <script type="text/javascript" src="{% static "js/popper.min.js" %}"></script>
+    <script type="text/javascript" src="{% static "js/bootstrap.min.js" %}"></script>
     <script type="text/javascript" src="{% static "js/d3.min.js" %}"></script>
     <script type="text/javascript" src="{% static "js/web.js" %}"></script>
 {% endblock %}

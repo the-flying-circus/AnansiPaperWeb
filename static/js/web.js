@@ -1,21 +1,18 @@
-nodes = [
-    {id: "node1", group: 0, label: "Node 1"},
-    {id: "node2", group: 1, label: "Node 2"},
-    {id: "node3", group: 1, label: "Node 3"},
-    {id: "node4", group: 1, label: "Node 4"},
-    {id: "node5", group: 1, label: "Node 5"},
-    {id: "node6", group: 0, label: "Node 6"},
-]
+//$.get("/web/search?q=Neurobiology", function(data) {
+//    nodes = data.nodes;
+//    links = data.links;
+//});
 
-groups = {
-    0: "this",
-    1: "that",
-}
+nodes = [
+    {id: "node1", authors: "Bill Lee, Bob Ert", title: "How Things Stuff", isCool: true},
+    {id: "node2", authors: "Sal Lee, Frank Yi", title: "How Stuff Things", isCool: false},
+    {id: "node3", authors: "Grey Son", title: "How Things Stuff", isCool: false},
+    {id: "node4", authors: "Sue San, Char Lee", title: "How Things Stuff", isCool: true},
+]
 
 links = [
     {target: "node1", source: "node2", strength: 0.1},
-    {target: "node5", source: "node4", strength: 0.1},
-    {target: "node5", source: "node6", strength: 0.1},
+    {target: "node2", source: "node3", strength: 0.1},
 ]
 
 $(document).ready(function() {
@@ -65,12 +62,15 @@ $(document).ready(function() {
         .data(nodes)
         .enter().append("circle")
             .attr("r", 10)
-            .attr("fill", "grey");
+            .attr("fill", "grey")
+            .attr("data-toggle", "popover")
+            .attr("data-title", (node) => node.title)
+            .attr("data-content", (node) => node.authors);
 
     const textElements = g.selectAll("text")
         .data(nodes)
         .enter().append("text")
-            .text(node => node.label)
+            .text(node => node.authors)
             .attr("font-size", 14)
             .attr("dx", 15)
             .attr("dy", 4);
@@ -142,6 +142,12 @@ $(document).ready(function() {
 
     selectNode(nodes[0]);
     nodeElements.on("click", selectNode);
+    nodeElements.on("mouseover", function() {
+        $(this).popover("show");
+    });
+    nodeElements.on("mouseout", function() {
+        $(this).popover("hide");
+    });
     $(window).resize(function() {
         width = $container.width();
         height = $container.height();

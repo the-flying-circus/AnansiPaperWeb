@@ -28,6 +28,8 @@ class Article(models.Model):
     abstract = models.TextField(null=True)
     doi = models.TextField(null=True)
     authors = models.ManyToManyField(Author)
+    first_author = models.ForeignKey(Author, null=True, on_delete=models.SET_NULL, related_name="primary_articles")
+    last_author = models.ForeignKey(Author, null=True, on_delete=models.SET_NULL, related_name="pi_articles")
     journal = models.ForeignKey(Journal, null=True, on_delete=models.SET_NULL)
     # cites is the papers that this paper cites
     # cited is all the other papers that cite this paper

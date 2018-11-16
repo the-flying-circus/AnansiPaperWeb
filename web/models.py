@@ -10,12 +10,21 @@ class Author(models.Model):
         return self.name
 
 
+class Journal(models.Model):
+    name = models.TextField()
+
+    def __str__(self):
+        return self.name
+
+
 class Article(models.Model):
     title = models.TextField()
     url = models.TextField(null=True)
     year = models.PositiveSmallIntegerField(null=True)
     abstract = models.TextField(null=True)
+    doi = models.TextField(null=True)
     authors = models.ManyToManyField(Author)
+    journal = models.ForeignKey(Journal, null=True, on_delete=models.SET_NULL)
     # cites is the papers that this paper cites
     # cited is all the other papers that cite this paper
     cites = models.ManyToManyField("Article", related_name="cited")

@@ -14,6 +14,7 @@ $(document).ready(function() {
 });
 
 var COLORS = d3.schemeSet3;
+var nodeRadii = {};
 
 function main() {
     var $sidedrawerTitle = $(".navdrawer .navdrawer-header h3");
@@ -38,7 +39,7 @@ function main() {
     svg.append('svg:defs').append('svg:marker')
         .attr('id', 'end-arrow')
         .attr('viewBox', '0 -5 10 10')
-        .attr('refX', 60)
+        .attr('refX', 7)
         .attr('markerWidth', 8)
         .attr('markerHeight', 8)
         .attr('orient', 'auto')
@@ -88,12 +89,12 @@ function main() {
     }
 
     function calcNodeRadius(node) {
-        node.radius = 5 + Math.log(node.indegree + Math.E) * 8;
-        return node.radius;
+        nodeRadii[node.id] = 5 + Math.log(node.indegree + Math.E) * 8;
+        return nodeRadii[node.id];
     }
 
     function getLabelOffset(node) {
-        return 5 + node.radius;
+        return 5 + nodeRadii[node.id];
     }
 
     function getLinkColor(node, link) {
@@ -148,8 +149,22 @@ function main() {
         linkElements
             .attr("x1", link => link.source.x)
             .attr("y1", link => link.source.y)
-            .attr("x2", link => link.target.x)
-            .attr("y2", link => link.target.y);
+            .attr("x2", link => {
+                const targetPadding = 2 + nodeRadii[link.target.id];
+                const deltaX = link.target.x - link.source.x;
+                const deltaY = link.target.y - link.source.y;
+                const dist = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+                const normX = deltaX / dist;
+                return link.target.x - (targetPadding * normX);
+            })
+            .attr("y2", link => {
+                const targetPadding = 2 + nodeRadii[link.target.id];
+                const deltaX = link.target.x - link.source.x;
+                const deltaY = link.target.y - link.source.y;
+                const dist = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+                const normY = deltaY / dist;
+                return link.target.y - (targetPadding * normY);
+            });
         nodeElements
             .attr("cx", node => node.x)
             .attr("cy", node => node.y);

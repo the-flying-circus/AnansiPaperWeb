@@ -43,11 +43,11 @@ def graph(request):
     for node in nodes.prefetch_related("authors"):
         node_list.append({
             "id": node.id,
-            "label": (node.last_author.last_name if node.last_author else node.authors.first().last_name) + (" et al." if node.authors.count() > 1 else ""),
+            "label": node.label,
             "title": node.title,
             "isQuery": True,
             "authors": ", ".join([author.full_name for author in node.authors.all()]),
-            "group": node.last_author.id if node.last_author else node.authors.first().id
+            "group": node.group
         })
 
         for other in node.cites.filter(id__in=nodes.values_list("id", flat=True)):

@@ -68,8 +68,8 @@ function main() {
         .enter().append("text")
             .text(node => node.label)
             .attr("font-size", 14)
-            .attr("dx", 15)
-            .attr("dy", 4);
+            .attr("dx", 14)
+            .attr("dy", 5);
 
     function isNeighborLink(node, link) {
         return link.target.id === node.id || link.source.id === node.id;

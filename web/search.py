@@ -133,4 +133,14 @@ def traverse(centralNodes, keywords):
         # remove the found max from the pool
         del nodes[thisMax]
 
-    return Article.objects.filter(id=foundNodes)
+    return Article.objects.filter(id=foundNodes).distinct().all()
+
+
+def search(titles, authors, keywords):
+    centrals = findCentral(titles, authors, keywords)
+    centralKeys = Keyword.objects.filter(articles__in=centrals)
+    searchKeys = Keyword.objects.filter(keyword__in=keywords)
+    allNodes = traverse(centrals, (centralKeys | searchKeys).distinct())
+
+    return centrals, allNodes
+

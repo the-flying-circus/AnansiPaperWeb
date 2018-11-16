@@ -43,7 +43,7 @@ def graph(request):
     for node in nodes:
         node_list.append({
             "id": node.id,
-            "label": node.title,
+            "label": (node.last_author.last_name if node.last_author else node.authors.first().last_name) + (" et al." if node.authors.count() > 1 else ""),
             "title": node.title,
             "isQuery": True,
             "authors": ", ".join([author.full_name for author in node.authors.all()])

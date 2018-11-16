@@ -33,3 +33,4 @@ def search(request):
     return JsonResponse({
         "articles": list(Article.objects.filter(title__icontains=query).values("id", "title"))
     })
+

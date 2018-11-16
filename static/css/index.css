@@ -26,16 +26,17 @@ canvas{
 
 #landing-text{
 	text-align: center;
-	font-family: Karla;
+	font-family: Josefin Sans;
 } 
 
 .vertical-center{
 	min-height: 34%;  /* Fallback for browsers do NOT support vh unit */
 	min-height: 34vh;
-	margin-top: 33%;
-	margin-top: 33vh;
-	margin-bottom: 33%;
-	margin-bottom: 33vh;
+	margin-top: 13%;
+	margin-top: 13vh;
+	margin-bottom: 13%;
+	margin-bottom: 13vh;
+	margin-bottom: 0px;
 	display: flex;
 	align-items: center;
 }
@@ -45,4 +46,17 @@ canvas{
     text-align: center;
     background-color: transparent;
     border-radius: 0px;
+}
+
+#eyes {
+	height: 24vh;
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 8vh;
+	margin-bottom: 8vh;
+}
+
+#directions {
+	display: none;
 }

@@ -22,3 +22,11 @@ class Article(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class Keywords(models.Model):
+    keyword = models.TextField()
+    articles = models.ManyToManyField(Article, related_name="keywords")
+
+    def __str__(self):
+        return self.keyword

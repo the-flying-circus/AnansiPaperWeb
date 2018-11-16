@@ -67,7 +67,7 @@ canvas{
 #directions {
     display: none;
     color: black;
-    max-width: 600px;
+    max-width: 800px;
     margin: 0 auto;
     font-family: Work Sans;
 }
@@ -80,6 +80,16 @@ canvas{
     font-weight: 200;
 }
 
+#instr-header {
+	font-family: Josefin Sans;
+}
+
 #directions h2 {
     text-align: center;
+}
+
+#instr {
+	font-family: Work Sans;
+	font-weight: 200px;
+	text-align: center;
 }

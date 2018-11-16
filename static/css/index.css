@@ -24,7 +24,6 @@ canvas{
 	background-position: 50% 50%;
 } 
 
-/* ---- landing text ---- */ 
 #landing-text{
 	text-align: center;
 	font-family: Karla;
@@ -45,4 +44,5 @@ canvas{
     color: white;
     text-align: center;
     background-color: transparent;
+    border-radius: 0px;
 }

@@ -96,7 +96,7 @@ def generate_graph(request):
         _, nodes = getGraph(articles, authors, keywords)
         nodes = ",".join(str(x) for x in nodes)
     else:
-        nodes = ""
+        nodes = request.GET.get("nodes", "")
 
     return render(request, "web.html", {
         "nodes": nodes

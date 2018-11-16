@@ -1,6 +1,4 @@
-import math
-
-from .models import Article, Author, Keyword
+from .models import Article, Keyword
 from django.db.models import Count, Case, When
 from django.core.cache import cache
 
@@ -21,7 +19,7 @@ def findCentral(titles, authors, keywords):
     """
 
     # first, all titles are automatically centrals
-    centrals = []
+    centrals = Article.objects.none()
     if titles:
         centrals = Article.objects.filter(id__in=titles)
         # print('found matching articles: ')
@@ -187,7 +185,7 @@ def traverse(centralNodes, keywords):
 
 
 def getGraph(titles, authors, keywords):
-    key = "search:graph:{}:{}:{}".format(titles, authors, keywords)
+    key = "search:graph:{}:{}:{}".format(",".join(str(x) for x in titles), ",".join(str(x) for x in authors), ",".join(keywords))
     cached = cache.get(key)
     if cached:
         return cached

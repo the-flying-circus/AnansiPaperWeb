@@ -4,7 +4,7 @@
 {% block js %}
     {{ block.super }}
     <script type="text/javascript">
-    	var landing_state = true;
+        var landing_state = true;
     </script>
     <!-- particles.js container -->
     <div id="particles-js" style="z-index: -1"></div>
@@ -16,51 +16,61 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/js/standalone/selectize.min.js" integrity="sha256-+C0A5Ilqmu4QcSPxrlGpaZxJ04VjsRjKu+G82kl5UJk=" crossorigin="anonymous"></script>
 
     <script type="text/javascript">
-    	function transition(){
-    		search_cont = document.getElementById("search-container");
-    		search_cont.style["background-color"] = "white";
-    		search_cont.style["margin-top"] = "0px";
-    		search_cont.style["margin-bottom"] = "0px";
-    		search_cont.style["min-height"] = "100vh";
-    		search_cont.style.height = "100%";
-    		search_cont.style.top = "0";
-    		search_cont.style.bottom = "0";
+        function transition(){
+            search_cont = document.getElementById("search-container");
+            search_cont.style["background-color"] = "white";
+            search_cont.style["margin-top"] = "0px";
+            search_cont.style["margin-bottom"] = "0px";
+            search_cont.style["min-height"] = "100vh";
+            search_cont.style.height = "100%";
+            search_cont.style.top = "0";
+            search_cont.style.bottom = "0";
 
-    		document.getElementById("landing-text").style.color = "black";
+            document.getElementById("landing-text").style.color = "black";
 
-    	}
+        }
     </script>
 
     <script type="text/javascript">
-	    $(document).ready(function() {
-	        $("#search").selectize({
-	            valueField: 'id',
-	            labelField: 'title',
-	            searchField: ['title', 'authors'],
-	            maxItems: 1,
-	            create: false,
-	            render: {
-	                option: function(item, escape) {
-                        return '<div class="article"><span class="title">' + escape(item.title) + '</span><span class="year">' + escape(item.year) + '</span> <span class="authors">' + escape(item.authors) + '</span></div>';
-	                }
-	            },
-	            load: function(query, callback) {
-	                if (!query.length) return callback();
-	                $.ajax({
-	                    url: "/web/search?q=" + encodeURIComponent(query),
-	                    type: "GET",
-	                    error: function() {
-	                        callback();
-	                    },
-	                    success: function(res) {
-	                        callback(res.articles);
-	                    }
-	                });
-	            }
-	        }).on("change", function() {
-	            $("#search").closest("form").submit();
-	        });
-	    });
+        function addArticle(id) {
+            $.get("/web/node?id=" + encodeURIComponent(id), function(data) {
+                console.log(data);
+            });
+        }
+
+        $(document).ready(function() {
+            $("#search").selectize({
+                valueField: 'id',
+                labelField: 'title',
+                searchField: ['title', 'authors', 'doi'],
+                maxItems: 1,
+                preload: true,
+                create: false,
+                render: {
+                    option: function(item, escape) {
+                        return '<div class="article"><span class="title">' + escape(item.title) + '</span><span class="year">' + (item.year ? escape(item.year) : '') + '</span> <span class="authors">' + escape(item.authors) + '</span></div>';
+                    }
+                },
+                load: function(query, callback) {
+                    $.ajax({
+                        url: "/web/search?q=" + encodeURIComponent(query),
+                        type: "GET",
+                        error: function() {
+                            callback();
+                        },
+                        success: function(res) {
+                            callback(res.articles);
+                        }
+                    });
+                }
+            }).on("change", function() {
+                var val = $("#search")[0].selectize.getValue();
+                if (val !== "") {
+                    addArticle(val);
+                }
+                $("#search")[0].selectize.clear();
+            });
+        });
     </script>
 {% endblock %}
 
@@ -110,6 +120,6 @@
 <img id="eyes" src={% static "png/anansi.png"%} />
 
 <div id="directions">
-	<h2>Here's some info on how to use our search.</h2>
+    <h2>Here's some info on how to use our search.</h2>
 </div>
 {% endblock %}

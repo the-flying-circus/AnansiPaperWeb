@@ -6,6 +6,9 @@ name = "pypi"
 [packages]
 django = "*"
 dj-database-url = "*"
+"bs4" = "*"
+"requests" = "*"
+django-extensions = "*"
 
 [dev-packages]
 
